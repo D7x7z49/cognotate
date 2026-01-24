@@ -1,3 +1,5 @@
+// packages/database/prisma/schema.prisma
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -9,4 +11,441 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+}
+
+//============================
+// Base
+//============================
+
+model Profession {
+  id          String @id @default(cuid())
+  nickname    String @unique
+  permissions Json   @default("{}") // os permission
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  agents Agent[]
+
+  @@index([createdAt])
+}
+
+model Human {
+  id       String @id @default(cuid())
+  nickname String @unique
+
+  identityId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  identity Identity? @relation("IdentityHuman")
+}
+
+model Agent {
+  id       String @id @default(cuid())
+  nickname String @unique
+  model    String
+
+  identityId   String  @unique
+  professionId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  identity   Identity?   @relation("IdentityAgent")
+  profession Profession? @relation(fields: [professionId], references: [id], onDelete: SetNull)
+
+  @@index([model])
+  @@index([professionId])
+}
+
+enum UserType {
+  HUMAN
+  AGENT
+}
+
+model Identity {
+  id   String   @id @default(cuid())
+  type UserType
+
+  humanId String? @unique
+  agentId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  human Human? @relation("IdentityHuman", fields: [humanId], references: [id], onDelete: SetNull)
+  agent Agent? @relation("IdentityAgent", fields: [agentId], references: [id], onDelete: SetNull)
+
+  chatMembers ChatMember[] @relation("IdentityChatMember")
+  issues      Task[]       @relation("IdentityCreateTasks")
+  todos       Task[]       @relation("IdentityToTasks")
+  notes       Note[]       @relation("IdentityToNotes")
+
+  tags IdentityTag[] @relation("IdentityHasTags")
+
+  @@index([type])
+  @@index([humanId])
+  @@index([agentId])
+  @@index([type, humanId]) // Already exists, but ensure it covers new usage
+  @@index([type, agentId]) // Already exists, but ensure it covers new usage
+}
+
+//============================
+// Chat System - List
+//============================
+
+enum ChatType {
+  PRIVATE
+  GROUP
+}
+
+enum ChatMessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+  LINK
+}
+
+model Chat {
+  id           String   @id @default(cuid())
+  type         ChatType
+  nickname     String   @unique
+  description  String
+  membersLimit Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  ChatMember[]  @relation("ChatHasMembers")
+  messages ChatMessage[] @relation("ChatHasChatMessages")
+
+  branches Branch[] @relation("ChatHasBranches")
+  notes    Note[]   @relation("ChatHasNotes")
+
+  @@index([type, createdAt])
+  @@index([membersLimit])
+  @@index([createdAt])
+}
+
+model ChatRole {
+  id          String @id @default(cuid())
+  nickname    String @unique
+  permissions Json   @default("{}") // chat permission
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chatMembers ChatMember[] @relation("RoleChatMember")
+
+  @@index([createdAt])
+}
+
+model ChatMember {
+  id       String @id @default(cuid())
+  nickname String
+
+  chatId            String
+  identityId        String
+  roleId            String?
+  lastReadMessageId String?
+
+  currentBranchId  String?
+  currentContextId String?
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  lastReadAt DateTime?
+
+  chat            Chat         @relation("ChatHasMembers", fields: [chatId], references: [id], onDelete: Cascade)
+  role            ChatRole?    @relation("RoleChatMember", fields: [roleId], references: [id], onDelete: SetNull)
+  identity        Identity     @relation("IdentityChatMember", fields: [identityId], references: [id], onDelete: Cascade)
+  lastReadMessage ChatMessage? @relation("MessageReaders", fields: [lastReadMessageId], references: [id], onDelete: SetNull)
+
+  currentBranch  Branch?       @relation("CurrentBranch", fields: [currentBranchId], references: [id], onDelete: SetNull)
+  currentContext AgentContext? @relation("CurrentContext", fields: [currentContextId], references: [id], onDelete: SetNull)
+
+  messages ChatMessage[] @relation("ChatMemberSendChatMessages")
+
+  branches Branch[]       @relation("MemberCreateBranch")
+  contexts AgentContext[] @relation("MemberCreateContext")
+
+  @@unique([chatId, nickname])
+  @@unique([chatId, identityId])
+  @@unique([chatId, identityId, currentBranchId])
+  @@unique([chatId, identityId, currentContextId])
+  @@index([chatId, createdAt])
+  @@index([chatId, roleId])
+  @@index([identityId])
+  @@index([lastReadMessageId])
+  @@index([lastReadAt])
+}
+
+model ChatMessage {
+  id      String          @id @default(cuid())
+  type    ChatMessageType
+  content Json
+
+  chatId    String
+  authorId  String
+  replyToId String?
+
+  prevId String?
+  nextId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chat    Chat         @relation("ChatHasChatMessages", fields: [chatId], references: [id], onDelete: Cascade)
+  author  ChatMember   @relation("ChatMemberSendChatMessages", fields: [authorId], references: [id], onDelete: Cascade)
+  replyTo ChatMessage? @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+
+  prev ChatMessage? @relation("MessagePrev", fields: [prevId], references: [id], onDelete: SetNull)
+  next ChatMessage? @relation("MessageNext", fields: [nextId], references: [id], onDelete: SetNull)
+
+  readers ChatMember[]  @relation("MessageReaders")
+  replies ChatMessage[] @relation("MessageReplies")
+
+  prevMessages ChatMessage[] @relation("MessagePrev")
+  nextMessages ChatMessage[] @relation("MessageNext")
+
+  @@index([chatId, createdAt, authorId])
+  @@index([chatId, createdAt])
+  @@index([chatId, authorId])
+  @@index([chatId, replyToId])
+  @@index([chatId, type])
+  @@index([authorId, createdAt])
+  @@index([createdAt])
+  @@index([type])
+  @@index([replyToId, createdAt])
+  @@index([replyToId])
+  @@index([prevId])
+  @@index([nextId])
+}
+
+//============================
+// Todo System - Tree
+//============================
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED
+  DONE
+  FAILED
+  CANCELLED
+}
+
+model Task {
+  id       String     @id @default(cuid())
+  status   TaskStatus @default(TODO)
+  priority Int        @default(0)
+  content  Json
+
+  authorId     String
+  assignedToId String?
+  parentId     String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  author     Identity  @relation("IdentityCreateTasks", fields: [authorId], references: [id], onDelete: Cascade)
+  assignedTo Identity? @relation("IdentityToTasks", fields: [assignedToId], references: [id], onDelete: SetNull)
+  parent     Task?     @relation("TaskHasSubtasks", fields: [parentId], references: [id], onDelete: SetNull)
+
+  subtasks Task[] @relation("TaskHasSubtasks")
+
+  @@index([authorId, createdAt]) // For user's task lists
+  @@index([authorId, status, priority])
+  @@index([status, priority, createdAt])
+  @@index([assignedToId, createdAt])
+  @@index([assignedToId, priority, createdAt])
+  @@index([assignedToId, status]) // For assigned tasks by status
+  @@index([parentId]) // For subtask lookups
+  @@index([status, createdAt]) // For task filtering by status
+}
+
+//============================
+// Note System - Graph
+//============================
+
+model Branch {
+  id       String @id @default(cuid())
+  nickname String
+
+  chatId           String
+  authorId         String
+  rootContextId    String
+  currentContextId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chat    Chat         @relation("ChatHasBranches", fields: [chatId], references: [id], onDelete: Cascade)
+  author  ChatMember   @relation("MemberCreateBranch", fields: [authorId], references: [id], onDelete: Cascade)
+  root    AgentContext @relation("RootContextToBranch", fields: [rootContextId], references: [id], onDelete: Cascade)
+  current AgentContext @relation("CurrentContextToBranch", fields: [currentContextId], references: [id], onDelete: Cascade)
+
+  chatMembers ChatMember[] @relation("CurrentBranch")
+
+  @@unique([chatId, nickname])
+  @@index([chatId, createdAt])
+  @@index([authorId])
+  @@index([rootContextId])
+  @@index([currentContextId])
+}
+
+// Agent or Human use Identity to create messages
+model AgentContext {
+  id      String @id @default(cuid())
+  content Json
+
+  authorId String
+  prevId   String?
+  nextId   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author ChatMember @relation("MemberCreateContext", fields: [authorId], references: [id], onDelete: Cascade)
+
+  prev AgentContext? @relation("ContextPrev", fields: [prevId], references: [id], onDelete: SetNull)
+  next AgentContext? @relation("ContextNext", fields: [nextId], references: [id], onDelete: SetNull)
+
+  chatMembers    ChatMember[] @relation("CurrentContext")
+  rootBranchs    Branch[]     @relation("RootContextToBranch")
+  currentBranchs Branch[]     @relation("CurrentContextToBranch")
+
+  prevContexts AgentContext[] @relation("ContextPrev")
+  nextContexts AgentContext[] @relation("ContextNext")
+
+  @@index([authorId])
+  @@index([authorId, createdAt])
+}
+
+enum NoteStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum NoteType {
+  OBS
+  REA
+  ACT
+  REF
+  QUE
+  INS
+}
+
+model Note {
+  id      String   @id @default(cuid())
+  type    NoteType
+  title   String // What
+  /// Why & How
+  /// `how` can use `!call:<link>` request link
+  /// `how` can use `!call$<command>` exec command
+  /// `how` can use `!call#[Chat.nickname:]<Note.number>` reference Note
+  /// `how` can use `!call@[Chat.nickname:]<ChatMember.nickname>` helper to ChatMember
+  content Json
+  paths   Json // Where
+
+  /// Project-scoped monotonically increasing sequence number.
+  /// Used for human-readable reference (e.g. NOTE-42).
+  /// NOT a timeline or ordering key.
+  number    Int
+  status    NoteStatus @default(ACTIVE)
+  viewCount Int        @default(0)
+
+  chatId   String // Where
+  authorId String // Who
+
+  // Add these fields for continuity
+  prevId String? @unique
+  nextId String? @unique
+
+  createdAt  DateTime  @default(now()) // When
+  updatedAt  DateTime  @updatedAt
+  archivedAt DateTime?
+
+  chat   Chat     @relation("ChatHasNotes", fields: [chatId], references: [id], onDelete: Cascade)
+  author Identity @relation("IdentityToNotes", fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Add these self-referencing relations
+  prev Note? @relation("NotePrev", fields: [prevId], references: [id], onDelete: SetNull)
+  next Note? @relation("NoteNext", fields: [nextId], references: [id], onDelete: SetNull)
+
+  prevNotes Note[] @relation("NotePrev")
+  nextNotes Note[] @relation("NoteNext")
+
+  referencedBy NoteReference[] @relation("NoteReferencedBy")
+  references   NoteReference[] @relation("NoteReferences")
+
+  @@unique([chatId, number])
+  @@index([chatId, authorId, createdAt])
+  @@index([chatId, type, createdAt])
+  @@index([chatId, status, createdAt])
+  @@index([chatId, status]) // For chat-specific note lists
+  @@index([status, viewCount, createdAt])
+  @@index([chatId, createdAt])
+  @@index([authorId, createdAt])
+  @@index([status, createdAt]) // For active/archived filtering
+  @@index([prevId]) // For finding next note
+  @@index([nextId]) // For finding previous note
+}
+
+model NoteReference {
+  sourceNoteId String
+  targetNoteId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sourceNote Note @relation("NoteReferences", fields: [sourceNoteId], references: [id], onDelete: Cascade)
+  targetNote Note @relation("NoteReferencedBy", fields: [targetNoteId], references: [id], onDelete: Cascade)
+
+  @@id([sourceNoteId, targetNoteId])
+  @@index([createdAt])
+  @@index([sourceNoteId, createdAt])
+  @@index([targetNoteId, createdAt])
+  @@index([sourceNoteId])
+  @@index([targetNoteId])
+}
+
+//============================
+// Tag System
+//============================
+
+model Tag {
+  id          String  @id @default(cuid())
+  nickname    String  @unique
+  description String?
+  color       String? // #XXXXXXXX
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  identities IdentityTag[] @relation("TagHasIdentities")
+
+  @@index([createdAt])
+}
+
+model IdentityTag {
+  identityId String
+  tagId      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  identity Identity @relation("IdentityHasTags", fields: [identityId], references: [id], onDelete: Cascade)
+  tag      Tag      @relation("TagHasIdentities", fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([identityId, tagId])
+  @@index([identityId])
+  @@index([tagId])
 }
