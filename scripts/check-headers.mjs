@@ -1,8 +1,8 @@
 // scripts/check-headers.mjs
 // Automate relative path header insertion with LogLight compliance
 
-import { readdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, extname, join, relative } from "node:path";
+import { readdir, readFile, writeFile, stat } from "node:fs/promises";
+import { dirname, extname, join, relative, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // =============================================================================
@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 
 const log = {
   sect: (n) => console.log(`[=] ${n} Start`),
-  end:  (n) => console.log(`[=] ${n} Complete`),
+  end: (n) => console.log(`[=] ${n} Complete`),
   step: (n) => console.log(`[-] ${n}`),
   work: (n) => console.log(`[*] ${n}`),
   find: (n) => console.log(`[+] ${n}`),
@@ -26,15 +26,21 @@ const log = {
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
 const IGNORE_LIST = new Set([
-  ".git", "node_modules", "dist", "build", "generated", ".next", ".DS_Store"
+  ".git",
+  "node_modules",
+  "dist",
+  "build",
+  "generated",
+  ".next",
+  ".DS_Store",
 ]);
 
 // Extension to Comment Style Mapping
 const RULES = {
-  "//":   ["js", "ts", "jsx", "tsx", "mjs", "cjs", "mts", "cts", "java"],
-  "#":    ["py", "sh", "yaml", "yml", "dockerfile"],
-  "--":   ["sql", "lua"],
-  "/*":   ["css", "scss", "less"],
+  "//": ["js", "ts", "jsx", "tsx", "mjs", "cjs", "mts", "cts", "java"],
+  "#": ["py", "sh", "yaml", "yml", "dockerfile"],
+  "--": ["sql", "lua"],
+  "/*": ["css", "scss", "less"],
   "<!--": ["html", "xml", "vue", "svg"],
 };
 
@@ -46,7 +52,7 @@ function getStyle(file) {
   const ext = extname(file).slice(1).toLowerCase();
   for (const [token, exts] of Object.entries(RULES)) {
     if (exts.includes(ext)) {
-      const end = (token === "/*") ? " */" : (token === "<!--") ? " -->" : "";
+      const end = token === "/*" ? " */" : token === "<!--" ? " -->" : "";
       return { start: token + " ", end };
     }
   }
@@ -84,7 +90,7 @@ async function scan(dir) {
 
     const path = join(dir, entry.name);
     if (entry.isDirectory()) {
-      files.push(...await scan(path));
+      files.push(...(await scan(path)));
     } else {
       if (getStyle(path)) files.push(path);
     }
@@ -103,12 +109,48 @@ async function processFile(file) {
 
     if (idx === -1) return "skipped";
 
-    lines.splice(idx, 0, header);
+    const existingLine = lines[idx];
+    const trimmedLine = existingLine ? existingLine.trim() : "";
+    const isExistingHeader =
+      trimmedLine.startsWith(style.start) &&
+      trimmedLine.endsWith(style.end) &&
+      trimmedLine
+        .slice(style.start.length, trimmedLine.length - style.end.length)
+        .trim()
+        .includes("/");
+
+    if (isExistingHeader) {
+      // Replace the wrong header
+      lines[idx] = header;
+    } else {
+      // Insert the header
+      lines.splice(idx, 0, header);
+    }
+
     await writeFile(file, lines.join("\n"));
     return "added";
-
   } catch (err) {
     return "error";
+  }
+}
+
+// =============================================================================
+//  HELPER FUNCTIONS FOR MAIN
+// =============================================================================
+
+async function collectFiles(target, fileSet) {
+  const targetPath = isAbsolute(target) ? target : join(process.cwd(), target);
+
+  try {
+    const stats = await stat(targetPath);
+    if (stats.isFile()) {
+      if (getStyle(targetPath)) fileSet.add(targetPath);
+    } else {
+      const scannedFiles = await scan(targetPath);
+      scannedFiles.forEach((file) => fileSet.add(file));
+    }
+  } catch (err) {
+    log.fail(`Invalid target: ${target}`);
   }
 }
 
@@ -117,16 +159,22 @@ async function processFile(file) {
 // =============================================================================
 
 async function main() {
-  const target = process.argv[2] || ".";
-  const start = Date.now();
+  const targets = process.argv.slice(2);
+  if (targets.length === 0) targets.push(".");
 
+  const start = Date.now();
   log.sect("Check Headers");
 
-  // Phase 1: Scan
-  log.step("Scan directory structure");
-  log.work(`Target: ${target}`);
+  // Phase 1: Collect files
+  log.step("Collect files");
+  const fileSet = new Set();
 
-  const files = await scan(join(process.cwd(), target));
+  for (const target of targets) {
+    log.work(`Processing target: ${target}`);
+    await collectFiles(target, fileSet);
+  }
+
+  const files = Array.from(fileSet);
   log.find(`Found ${files.length} supported files`);
 
   if (files.length === 0) {
@@ -153,9 +201,9 @@ async function main() {
   // Phase 3: Summary
   log.step("Process summary");
 
-  if (stats.added > 0)   log.find(`Modified ${stats.added} files`);
+  if (stats.added > 0) log.find(`Modified ${stats.added} files`);
   if (stats.skipped > 0) log.warn(`Skipped ${stats.skipped} files (valid)`);
-  if (stats.error > 0)   log.fail(`Failed ${stats.error} files`);
+  if (stats.error > 0) log.fail(`Failed ${stats.error} files`);
 
   const time = ((Date.now() - start) / 1000).toFixed(2);
   log.work(`Time taken: ${time}s`);
@@ -163,7 +211,7 @@ async function main() {
   log.end("Check Headers");
 }
 
-main().catch(err => {
+main().catch((err) => {
   log.fail(err.message);
   process.exit(1);
 });
