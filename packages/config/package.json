@@ -5,7 +5,7 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "build": "bun build index.ts --outdir ./dist"
+    "build": "bun build index.ts --target=bun --outdir ./dist"
   },
   "devDependencies": {
     "@types/bun": "catalog:types"

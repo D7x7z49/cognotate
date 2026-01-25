@@ -1,4 +1,4 @@
-// packages/config/identity.ts
+// packages/config/src/identity.ts
 
 export const COGNOTATE = "cognotate";
 export const HOME_NAME = `.${COGNOTATE}`;

@@ -1,4 +1,4 @@
-// packages/config/schema.ts
+// packages/config/src/schema.ts
 
 import { z } from "zod";
 

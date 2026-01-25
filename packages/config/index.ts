@@ -3,8 +3,8 @@
 import { homedir } from "os";
 import { dirname, join } from "path";
 
-import { HOME_NAME, CONFIG_NAME } from "./identity";
-import { ConfigSchema, type Config, type ReturnConfig } from "./schema";
+import { HOME_NAME, CONFIG_NAME } from "./src/identity";
+import { ConfigSchema, type Config, type ReturnConfig } from "./src/schema";
 
 declare global {
   var __cognotate_config: ReturnConfig | undefined;
