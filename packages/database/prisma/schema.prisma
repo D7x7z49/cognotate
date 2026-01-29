@@ -366,8 +366,8 @@ model Note {
   authorId String // Who
 
   // Add these fields for continuity
-  prevId String? @unique
-  nextId String? @unique
+  prevId String?
+  nextId String?
 
   createdAt  DateTime  @default(now()) // When
   updatedAt  DateTime  @updatedAt
