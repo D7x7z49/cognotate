@@ -28,7 +28,7 @@
 3.  Pattern: Link When Completing Work
   * When & Why: When writing commit messages or pull request descriptions.
   * Think: "Which public discussion does this address? How do I link them?"
-  * Act: To create links, learn how to use keywords (like `fixes #`) from the tool's help. This allows work to be tracked and can automatically update discussions.
+  * Act: To create links, learn how to use keywords (like `[commit type] #number`) from the tool's help. This allows work to be tracked and can automatically update discussions.
 
 ## SAFETY RULES
 
