@@ -1,0 +1,16 @@
+{
+  "name": "@cognotate/llm",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "module": "index.ts",
+  "scripts": {
+    "build": "bun build index.ts --target=bun --outdir ./dist"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:types"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:types"
+  }
+}
