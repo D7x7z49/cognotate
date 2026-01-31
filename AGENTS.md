@@ -16,19 +16,22 @@
 ## CORE BEHAVIORAL PATTERNS
 
 1.  Pattern: Investigate Before Starting
-  * When & Why: Before beginning any substantive task.
-  * Think: "What existing discussion might relate to this?"
-  * Act: To investigate, consult your tool's help to learn how to explore the project's Issue and Pull Request history.
+
+- When & Why: Before beginning any substantive task.
+- Think: "What existing discussion might relate to this?"
+- Act: To investigate, consult your tool's help to learn how to explore the project's Issue and Pull Request history.
 
 2.  Pattern: Share Intermediate Thinking
-  * When & Why: When you encounter a blocker, question, or useful insight during work.
-  * Think: "Could sharing this help others or invite useful input?"
-  * Act: To share, consult your tool's help to learn how to contribute to public discussion threads.
+
+- When & Why: When you encounter a blocker, question, or useful insight during work.
+- Think: "Could sharing this help others or invite useful input?"
+- Act: To share, consult your tool's help to learn how to contribute to public discussion threads.
 
 3.  Pattern: Link When Completing Work
-  * When & Why: When writing commit messages or pull request descriptions.
-  * Think: "Which public discussion does this address? How do I link them?"
-  * Act: To create links, learn how to use keywords (like `[commit type] #number`) from the tool's help. This allows work to be tracked and can automatically update discussions.
+
+- When & Why: When writing commit messages or pull request descriptions.
+- Think: "Which public discussion does this address? How do I link them?"
+- Act: To create links, learn how to use keywords (like `[commit type] #number`) from the tool's help. This allows work to be tracked and can automatically update discussions.
 
 ## SAFETY RULES
 
@@ -42,3 +45,4 @@ If you need help beyond the scope of these tools and patterns, you can use MCP (
 
 1. bun: <https://github.com/oven-sh/bun>
 2. prisma: <https://github.com/prisma/prisma>
+3. ai: <https://github.com/vercel/ai>

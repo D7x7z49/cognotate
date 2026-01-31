@@ -10,7 +10,9 @@
       "packages/*",
       "apps/*"
     ],
-    "catalog": {},
+    "catalog": {
+      "zod": "^4.3.6"
+    },
     "catalogs": {
       "types": {
         "@types/bun": "latest",

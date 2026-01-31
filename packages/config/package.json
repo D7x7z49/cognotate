@@ -14,6 +14,6 @@
     "typescript": "catalog:types"
   },
   "dependencies": {
-    "zod": "^4.3.6"
+    "zod": "catalog:"
   }
 }
