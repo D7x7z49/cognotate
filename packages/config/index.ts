@@ -6,10 +6,6 @@ import { dirname, join } from "path";
 import { HOME_NAME, CONFIG_NAME } from "./src/identity";
 import { ConfigSchema, type Config, type ReturnConfig } from "./src/schema";
 
-declare global {
-  var __cognotate_config: ReturnConfig | undefined;
-}
-
 export const ROOT = join(homedir(), HOME_NAME);
 export const ROOT_CONFIG = join(ROOT, "config.jsonc");
 
@@ -43,10 +39,7 @@ async function getProjectConfig(): Promise<string | null> {
   return null;
 }
 
-async function getConfig(force = false): Promise<ReturnConfig> {
-  if (globalThis.__cognotate_config && !force)
-    return globalThis.__cognotate_config;
-
+async function loadConfig() {
   let rootConfig: Config = {} as Config;
   let projectConfig: Config = {} as Config;
 
@@ -74,10 +67,29 @@ async function getConfig(force = false): Promise<ReturnConfig> {
     ...rootConfig,
     ...projectConfig,
   };
-  globalThis.__cognotate_config = mergedConfig;
+
   return mergedConfig;
 }
 
-const globalConfig = await getConfig();
+let _promise: Promise<ReturnConfig> | null = null;
+let _current: ReturnConfig | undefined;
 
-export { globalConfig, getConfig };
+function getConfig(force = false): Promise<ReturnConfig> {
+  if (!force && _current) return Promise.resolve(_current);
+
+  if (!_promise || force) {
+    _promise = (async () => {
+      const cfg = await loadConfig();
+      _current = cfg;
+      _promise = null;
+      return cfg;
+    })();
+  }
+  return _promise;
+}
+
+async function refreshConfig() {
+  return getConfig(true);
+}
+
+export { getConfig, refreshConfig };

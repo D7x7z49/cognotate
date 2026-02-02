@@ -1,6 +1,6 @@
 // packages/database/index.ts
 
-import { globalConfig } from "@cognotate/config";
+import { getConfig } from "@cognotate/config";
 import { PrismaClient } from "./generated/prisma/client";
 
 declare global {
@@ -8,6 +8,8 @@ declare global {
 }
 
 async function getAdapter() {
+  const globalConfig = await getConfig();
+
   if (globalConfig.database.type === "sqlite") {
     const { PrismaLibSql } = await import("@prisma/adapter-libsql");
     const adapter = new PrismaLibSql({
