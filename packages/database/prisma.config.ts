@@ -1,7 +1,9 @@
 // packages/database/prisma.config.ts
 
-import { globalConfig } from "@cognotate/config";
+import { getConfig } from "@cognotate/config";
 import { defineConfig } from "prisma/config";
+
+const globalConfig = await getConfig();
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
