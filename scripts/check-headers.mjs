@@ -1,5 +1,6 @@
 // scripts/check-headers.mjs
 // Automate relative path header insertion with LogLight compliance
+// NOTE: Functions remain as function declarations for CI script compatibility
 
 import { readdir, readFile, writeFile, stat } from "node:fs/promises";
 import { dirname, extname, join, relative, isAbsolute } from "node:path";
