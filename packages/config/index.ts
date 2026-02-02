@@ -19,9 +19,9 @@ export const DEFAULT_CONFIG: ReturnConfig = {
   },
 };
 
-async function findProjectRoot(
+const findProjectRoot = async (
   startPath: string = process.cwd(),
-): Promise<string | null> {
+): Promise<string | null> => {
   let currentDir = startPath;
   while (currentDir !== dirname(currentDir)) {
     const gitDir = join(currentDir, ".git");
@@ -30,16 +30,16 @@ async function findProjectRoot(
   }
 
   return null;
-}
+};
 
-async function getProjectConfig(): Promise<string | null> {
+const getProjectConfig = async (): Promise<string | null> => {
   const root = await findProjectRoot();
   if (root) return join(root, CONFIG_NAME);
 
   return null;
-}
+};
 
-async function loadConfig() {
+const loadConfig = async (): Promise<ReturnConfig> => {
   let rootConfig: Config = {} as Config;
   let projectConfig: Config = {} as Config;
 
@@ -69,12 +69,12 @@ async function loadConfig() {
   };
 
   return mergedConfig;
-}
+};
 
 let _promise: Promise<ReturnConfig> | null = null;
 let _current: ReturnConfig | undefined;
 
-function getConfig(force = false): Promise<ReturnConfig> {
+const getConfig = (force = false): Promise<ReturnConfig> => {
   if (!force && _current) return Promise.resolve(_current);
 
   if (!_promise || force) {
@@ -86,10 +86,10 @@ function getConfig(force = false): Promise<ReturnConfig> {
     })();
   }
   return _promise;
-}
+};
 
-async function refreshConfig() {
+const refreshConfig = async (): Promise<ReturnConfig> => {
   return getConfig(true);
-}
+};
 
 export { getConfig, refreshConfig };
