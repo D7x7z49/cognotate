@@ -7,7 +7,7 @@ declare global {
   var __prisma: PrismaClient | undefined;
 }
 
-async function getAdapter() {
+const getAdapter = async () => {
   const globalConfig = await getConfig();
 
   if (globalConfig.database.type === "sqlite") {
@@ -26,9 +26,9 @@ async function getAdapter() {
 
     return adapter;
   }
-}
+};
 
-async function genPrismaClient() {
+const genPrismaClient = async () => {
   const adapter = await getAdapter();
 
   if (!adapter) {
@@ -36,7 +36,7 @@ async function genPrismaClient() {
   }
 
   return new PrismaClient({ adapter });
-}
+};
 
 // Create or reuse the global prisma instance
 const prisma = globalThis.__prisma ?? (await genPrismaClient());
