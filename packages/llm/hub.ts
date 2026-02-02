@@ -17,7 +17,7 @@ const PROVIDER_FACTORIES = {
   deepseek: () => createDeepSeek({ apiKey: Bun.env.DEEPSEEK_API_KEY }),
 } as const;
 
-async function loadHub(): Promise<ProviderHub> {
+const loadHub = async (): Promise<ProviderHub> => {
   const entries = Object.entries(PROVIDER_FACTORIES).flatMap(
     ([key, factory]) => {
       const provider = factory();
@@ -25,12 +25,12 @@ async function loadHub(): Promise<ProviderHub> {
     },
   );
   return createProviderRegistry(Object.fromEntries(entries));
-}
+};
 
 let _promise: Promise<ProviderHub> | null = null;
 let _current: ProviderHub | undefined;
 
-function getProviderHub(force = false): Promise<ProviderHub> {
+const getProviderHub = (force = false): Promise<ProviderHub> => {
   if (!force && _current) return Promise.resolve(_current);
 
   if (!_promise || force) {
@@ -42,10 +42,10 @@ function getProviderHub(force = false): Promise<ProviderHub> {
     })();
   }
   return _promise;
-}
+};
 
-async function refreshProviderHub(): Promise<ProviderHub> {
+const refreshProviderHub = async (): Promise<ProviderHub> => {
   return getProviderHub(true);
-}
+};
 
 export { getProviderHub, refreshProviderHub };
