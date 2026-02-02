@@ -5,6 +5,7 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
+    "test": "bun test",
     "build": "bun build index.ts --target=bun --outdir ./dist"
   },
   "devDependencies": {
@@ -14,7 +15,11 @@
     "typescript": "catalog:types"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.35",
     "@ai-sdk/deepseek": "^2.0.15",
+    "@ai-sdk/google": "^3.0.20",
+    "@ai-sdk/openai": "^3.0.25",
+    "@ai-sdk/xai": "^3.0.46",
     "ai": "^6.0.64",
     "zod": "catalog:"
   }
