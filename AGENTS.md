@@ -38,6 +38,7 @@
 1. Foundational Method: For any unfamiliar operation, first consult the authoritative guide using `[command] --help`. This applies to both tool use and collaboration steps.
 2. Confirm Context: Ensure you are in the correct project directory.
 3. Be Cautious: Understand the impact before running commands that change history (`git rebase`, `git reset`) or remove dependencies (`bun remove`).
+4. Consult Experience: When stuck on a recurring problem, check `share/` for documented solutions.
 
 ## FURTHER ASSISTANCE
 
