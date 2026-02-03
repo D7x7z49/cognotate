@@ -3,14 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write ."
   },
   "workspaces": {
     "packages": [
       "packages/*",
       "apps/*"
     ],
-    "catalog": {},
+    "catalog": {
+      "zod": "^4.3.6"
+    },
     "catalogs": {
       "types": {
         "@types/bun": "latest",
