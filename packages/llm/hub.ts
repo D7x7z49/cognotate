@@ -9,6 +9,25 @@ import { createXai } from "@ai-sdk/xai";
 
 type ProviderHub = ReturnType<typeof createProviderRegistry>;
 
+declare global {
+  var __cognotate_provider_hub:
+    | {
+        current: ProviderHub | undefined;
+        promise: Promise<ProviderHub> | null;
+      }
+    | undefined;
+}
+
+const getProviderHubState = () => {
+  if (!globalThis.__cognotate_provider_hub) {
+    globalThis.__cognotate_provider_hub = {
+      current: undefined,
+      promise: null,
+    };
+  }
+  return globalThis.__cognotate_provider_hub;
+};
+
 const PROVIDER_FACTORIES = {
   openai: () => createOpenAI({ apiKey: Bun.env.OPENAI_API_KEY }),
   anthropic: () => createAnthropic({ apiKey: Bun.env.ANTHROPIC_API_KEY }),
@@ -27,21 +46,22 @@ const loadHub = async (): Promise<ProviderHub> => {
   return createProviderRegistry(Object.fromEntries(entries));
 };
 
-let _promise: Promise<ProviderHub> | null = null;
-let _current: ProviderHub | undefined;
-
 const getProviderHub = (force = false): Promise<ProviderHub> => {
-  if (!force && _current) return Promise.resolve(_current);
+  const state = getProviderHubState();
 
-  if (!_promise || force) {
-    _promise = (async () => {
+  if (!force && state.current) {
+    return Promise.resolve(state.current);
+  }
+
+  if (!state.promise || force) {
+    state.promise = (async () => {
       const hub = await loadHub();
-      _current = hub;
-      _promise = null;
+      state.current = hub;
+      state.promise = null;
       return hub;
     })();
   }
-  return _promise;
+  return state.promise;
 };
 
 const refreshProviderHub = async (): Promise<ProviderHub> => {

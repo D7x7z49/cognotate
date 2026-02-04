@@ -1,3 +1,3 @@
 // packages/database/prisma/seed.ts
 
-import { prisma } from "../index";
+import { getPrisma } from "../index";

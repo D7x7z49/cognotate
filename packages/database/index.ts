@@ -4,8 +4,23 @@ import { getConfig } from "@cognotate/config";
 import { PrismaClient } from "./generated/prisma/client";
 
 declare global {
-  var __prisma: PrismaClient | undefined;
+  var __cognotate_prisma:
+    | {
+        current: PrismaClient | undefined;
+        promise: Promise<PrismaClient> | null;
+      }
+    | undefined;
 }
+
+const getPrismaState = () => {
+  if (!globalThis.__cognotate_prisma) {
+    globalThis.__cognotate_prisma = {
+      current: undefined,
+      promise: null,
+    };
+  }
+  return globalThis.__cognotate_prisma;
+};
 
 const getAdapter = async () => {
   const globalConfig = await getConfig();
@@ -38,12 +53,26 @@ const genPrismaClient = async () => {
   return new PrismaClient({ adapter });
 };
 
-// Create or reuse the global prisma instance
-const prisma = globalThis.__prisma ?? (await genPrismaClient());
+const getPrisma = (force = false): Promise<PrismaClient> => {
+  const state = getPrismaState();
 
-// In development, save to global to prevent hot-reloading issues
-if (process.env.NODE_ENV !== "production") {
-  globalThis.__prisma = prisma;
-}
+  if (!force && state.current) {
+    return Promise.resolve(state.current);
+  }
 
-export { prisma };
+  if (!state.promise || force) {
+    state.promise = (async () => {
+      const prisma = await genPrismaClient();
+      state.current = prisma;
+      state.promise = null;
+      return prisma;
+    })();
+  }
+  return state.promise;
+};
+
+const refreshPrisma = async (): Promise<PrismaClient> => {
+  return getPrisma(true);
+};
+
+export { getPrisma, refreshPrisma };
