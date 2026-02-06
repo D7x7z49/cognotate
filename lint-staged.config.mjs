@@ -5,6 +5,9 @@
  * @type {import('lint-staged').Configuration}
  */
 export default {
-  "*.{js,mjs,cjs,jsx,ts,tsx}": ["prettier --write"],
+  "*.{js,mjs,cjs,jsx,ts,tsx}": [
+    "prettier --write",
+    "bun scripts/check-headers.mjs",
+  ],
   "*.{html,css,scss,sass,less,md,json,jsonc,yml,yaml}": ["prettier --write"],
 };
