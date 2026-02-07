@@ -13,7 +13,9 @@ describe("config", () => {
     const config = await getConfig();
     expect(config).toBeDefined();
     expect(config.database).toBeDefined();
-    expect(config.database.type).toBe("sqlite");
+    expect(config.database.local).toBeDefined();
+    expect(typeof config.database.local).toBe("string");
+    expect(config.database.local).toMatch(/^file:/);
   });
 
   it("should cache config and return same instance", async () => {
@@ -26,6 +28,8 @@ describe("config", () => {
     const config1 = await getConfig();
     const config2 = await refreshConfig();
     expect(config1).not.toBe(config2);
-    expect(config2.database.type).toBe("sqlite");
+    expect(config2.database.local).toBeDefined();
+    expect(typeof config2.database.local).toBe("string");
+    expect(config2.database.local).toMatch(/^file:/);
   });
 });

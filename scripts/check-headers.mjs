@@ -5,20 +5,7 @@
 import { readdir, readFile, writeFile, stat } from "node:fs/promises";
 import { dirname, extname, join, relative, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
-
-// =============================================================================
-//  LOGLIGHT UTILITIES
-// =============================================================================
-
-const log = {
-  sect: (n) => console.log(`[=] ${n} Start`),
-  end: (n) => console.log(`[=] ${n} Complete`),
-  step: (n) => console.log(`[-] ${n}`),
-  work: (n) => console.log(`[*] ${n}`),
-  find: (n) => console.log(`[+] ${n}`),
-  warn: (n) => console.log(`[?] ${n}`),
-  fail: (n) => console.error(`[!] ${n}`),
-};
+import { log } from "./utils/log.mjs";
 
 // =============================================================================
 //  CONFIGURATION

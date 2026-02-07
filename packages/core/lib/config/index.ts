@@ -34,8 +34,7 @@ const getConfigState = () => {
 
 export const DEFAULT_CONFIG: Config = {
   database: {
-    type: "sqlite",
-    url: `file:${SQLITE_DB}`,
+    local: `file:${SQLITE_DB}`,
   },
   server: {
     port: DEFAULT_PORT,
@@ -43,23 +42,23 @@ export const DEFAULT_CONFIG: Config = {
 };
 
 const getProjectInfo = async (): Promise<(string | undefined)[]> => {
-  const [rootResult, identityResult] = await Promise.all([
+  const [identityResult, pathResult] = await Promise.all([
     Bun.$`git rev-list --max-parents=0 HEAD`.nothrow().quiet(),
     Bun.$`git rev-parse --show-toplevel`.nothrow().quiet(),
   ]);
 
-  if (rootResult.exitCode !== 0) {
-    console.error(rootResult.stderr.toString());
-    return [undefined, undefined];
-  }
   if (identityResult.exitCode !== 0) {
     console.error(identityResult.stderr.toString());
     return [undefined, undefined];
   }
+  if (pathResult.exitCode !== 0) {
+    console.error(pathResult.stderr.toString());
+    return [undefined, undefined];
+  }
 
   return [
-    rootResult.stdout.toString().trim(),
     identityResult.stdout.toString().trim(),
+    pathResult.stdout.toString().trim(),
   ];
 };
 
@@ -67,8 +66,8 @@ const loadConfig = async (): Promise<ReturnConfig> => {
   let rootConfig: Config = {} as Config;
   let projectConfig: Config = {} as Config;
 
-  const [projectRoot, projectIdentity] = await getProjectInfo();
-  const projectConfigPath = projectRoot ? join(projectRoot, CONFIG_NAME) : null;
+  const [projectIdentity, projectPath] = await getProjectInfo();
+  const projectConfigPath = projectPath ? join(projectPath, CONFIG_NAME) : null;
 
   // ensure root config
   if (await Bun.file(ROOT_CONFIG).exists()) {
@@ -94,8 +93,13 @@ const loadConfig = async (): Promise<ReturnConfig> => {
     ...projectConfig,
     info: {
       root: ROOT,
-      project: projectRoot,
-      identity: projectIdentity,
+      project: projectIdentity
+        ? {
+            identity: projectIdentity!,
+            name: projectPath!.split("/").slice(-1)[0]!,
+            path: projectPath!,
+          }
+        : undefined,
     },
   };
 

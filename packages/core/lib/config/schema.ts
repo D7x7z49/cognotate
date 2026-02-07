@@ -8,28 +8,25 @@ import { z } from "zod";
 
 const InfoConfigSchema = z.object({
   root: z.string(),
-  project: z.string().optional(),
-  identity: z.string().optional(),
+  project: z
+    .object({
+      identity: z.string(),
+      name: z.string(),
+      path: z.string(),
+    })
+    .optional(),
 });
 
 //================================
 // Database Configurations
 //================================
 
-const SqliteConfigSchema = z.object({
-  type: z.literal("sqlite"),
-  url: z.string(),
+export const DatabaseConfigSchema = z.object({
+  // local use SQLite
+  local: z.string(),
+  // remote use PostgreSQL, using apps/server works with multiple remote DBs
+  remote: z.array(z.string()).optional(),
 });
-
-const PostgresConfigSchema = z.object({
-  type: z.literal("postgres"),
-  url: z.string(),
-});
-
-export const DatabaseConfigSchema = z.discriminatedUnion("type", [
-  SqliteConfigSchema,
-  PostgresConfigSchema,
-]);
 
 //================================
 // Server Configurations

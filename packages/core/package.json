@@ -4,10 +4,20 @@
   "type": "module",
   "scripts": {
     "build": "bun build index.ts --target=bun --outdir ./dist --metafile=./dist/meta.json --metafile-md=./dist/meta.md",
-    "test": "bun test"
+    "test": "bun test",
+    "db:gen": "bunx --bun prisma generate",
+    "db:push": "bunx --bun prisma db push",
+    "db:push:force": "bunx --bun prisma db push --force-reset",
+    "db:pull": "bunx --bun prisma db pull",
+    "db:seed": "bunx --bun prisma db seed",
+    "db:studio": "bunx --bun prisma studio",
+    "db:migrate:dev": "bunx --bun prisma migrate dev",
+    "db:migrate:deploy": "bunx --bun prisma migrate deploy",
+    "db:migrate:reset": "bunx --bun prisma migrate reset"
   },
   "devDependencies": {
-    "@types/bun": "catalog:types"
+    "@types/bun": "catalog:types",
+    "prisma": "^7.3.0"
   },
   "peerDependencies": {
     "typescript": "catalog:types"
@@ -19,6 +29,8 @@
     "@ai-sdk/openai": "^3.0.25",
     "@ai-sdk/xai": "^3.0.46",
     "ai": "^6.0.64",
+    "@prisma/adapter-libsql": "^7.3.0",
+    "@prisma/client": "^7.3.0",
     "zod": "catalog:"
   }
 }
