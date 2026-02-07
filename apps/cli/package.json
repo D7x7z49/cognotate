@@ -1,0 +1,22 @@
+{
+  "name": "@cognotate/cli",
+  "version": "0.1.0",
+  "description": "CLI application for Cognotate",
+  "type": "module",
+  "scripts": {
+    "dev": "bun index.ts",
+    "build": "bun build.ts",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:types"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:types"
+  },
+  "dependencies": {
+    "@cognotate/core": "workspace:*",
+    "commander": "^14.0.3",
+    "zod": "catalog:"
+  }
+}

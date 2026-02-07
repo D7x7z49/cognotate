@@ -3,14 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write .",
+    "dev:cli": "bun run --filter '@cognotate/cli' dev",
+    "test:all": "bun run --filter '*' test",
+    "build:all": "bun run --filter '*' build"
   },
   "workspaces": {
     "packages": [
       "packages/*",
       "apps/*"
     ],
-    "catalog": {},
+    "catalog": {
+      "zod": "^4.3.6"
+    },
     "catalogs": {
       "types": {
         "@types/bun": "latest",
