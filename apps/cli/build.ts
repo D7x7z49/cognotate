@@ -3,7 +3,7 @@
 import { COGNOTATE } from "@cognotate/core/lib/config";
 
 const result = await Bun.build({
-  entrypoints: ["./main.ts"],
+  entrypoints: ["./index.ts"],
   compile: {
     outfile: `./dist/${COGNOTATE}`,
   },
