@@ -28,9 +28,10 @@
     "@ai-sdk/google": "^3.0.20",
     "@ai-sdk/openai": "^3.0.25",
     "@ai-sdk/xai": "^3.0.46",
-    "ai": "^6.0.64",
+    "@openrouter/ai-sdk-provider": "^2.1.1",
     "@prisma/adapter-libsql": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "ai": "^6.0.64",
     "zod": "catalog:"
   }
 }

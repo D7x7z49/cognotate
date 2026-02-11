@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "format": "prettier --write .",
+    "fmt": "prettier --write .",
     "dev:cli": "bun run --filter '@cognotate/cli' dev",
     "test:all": "bun run --filter '*' test",
     "build:all": "bun run --filter '*' build"
