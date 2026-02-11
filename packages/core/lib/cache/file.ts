@@ -13,12 +13,11 @@ const getFileCache = async <T>(
   }
 
   const data = await file.json();
-  const parsed = JSON.parse(data);
-  if (validator && !validator(parsed)) {
+  if (validator && !validator(data)) {
     return { hits: false };
   }
 
-  return { hits: true, data: parsed as T };
+  return { hits: true, data: data as T };
 };
 
 const setFileCache = async <T>(path: string, data: T): Promise<void> => {

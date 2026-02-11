@@ -19,7 +19,7 @@ export const verifyModelString = async (model: string) => {
       error: "invalid model format",
     };
 
-  if (!(providerKey in PROVIDERS))
+  if (!PROVIDERS.includes(providerKey as ProviderValue))
     return {
       success: false,
       error: "unsupported provider",
