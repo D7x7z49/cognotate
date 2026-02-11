@@ -5,7 +5,10 @@ import { createDeepSeek } from "@ai-sdk/deepseek";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createXai } from "@ai-sdk/xai";
+import { PROVIDER_LIST, type ProviderValue } from "./constants";
+import { getProviderKeys } from "./secret";
 
 type ProviderHub = ReturnType<typeof createProviderRegistry>;
 
@@ -28,21 +31,27 @@ const getProviderHubState = () => {
   return globalThis.__cognotate_provider_hub;
 };
 
-const PROVIDER_FACTORIES = {
-  openai: () => createOpenAI({ apiKey: Bun.env.OPENAI_API_KEY }),
-  anthropic: () => createAnthropic({ apiKey: Bun.env.ANTHROPIC_API_KEY }),
-  google: () => createGoogleGenerativeAI({ apiKey: Bun.env.GOOGLE_API_KEY }),
-  xai: () => createXai({ apiKey: Bun.env.XAI_API_KEY }),
-  deepseek: () => createDeepSeek({ apiKey: Bun.env.DEEPSEEK_API_KEY }),
+const PROVIDER_CREATORS = {
+  [PROVIDER_LIST.OPENAI]: createOpenAI,
+  [PROVIDER_LIST.ANTHROPIC]: createAnthropic,
+  [PROVIDER_LIST.GOOGLE]: createGoogleGenerativeAI,
+  [PROVIDER_LIST.XAI]: createXai,
+  [PROVIDER_LIST.DEEPSEEK]: createDeepSeek,
+  [PROVIDER_LIST.OPENROUTER]: createOpenRouter,
 } as const;
 
 const loadHub = async (): Promise<ProviderHub> => {
-  const entries = Object.entries(PROVIDER_FACTORIES).flatMap(
-    ([key, factory]) => {
-      const provider = factory();
-      return provider ? [[key, provider]] : [];
-    },
-  );
+  const keys = await getProviderKeys();
+
+  const entries = Object.entries(PROVIDER_CREATORS)
+    .flatMap(([id, genProvider]) => {
+      const apiKey = keys[id as ProviderValue];
+      if (!apiKey) return [];
+      const provider = genProvider({ apiKey });
+      return provider ? [[id, provider]] : [];
+    })
+    .filter(Boolean);
+
   return createProviderRegistry(Object.fromEntries(entries));
 };
 
