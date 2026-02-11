@@ -17,50 +17,6 @@ datasource db {
 // Base
 //============================
 
-model Profession {
-  id          String @id @default(cuid())
-  nickname    String @unique
-  permissions Json   @default("{}") // os permission
-  description String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  agents Agent[]
-
-  @@index([createdAt])
-}
-
-model Human {
-  id       String @id @default(cuid())
-  nickname String @unique
-
-  identityId String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  identity Identity? @relation("IdentityHuman")
-}
-
-model Agent {
-  id       String @id @default(cuid())
-  nickname String @unique
-  model    String
-
-  identityId   String  @unique
-  professionId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  identity   Identity?   @relation("IdentityAgent")
-  profession Profession? @relation(fields: [professionId], references: [id], onDelete: SetNull)
-
-  @@index([model])
-  @@index([professionId])
-}
-
 enum UserType {
   HUMAN
   AGENT
@@ -93,6 +49,29 @@ model Identity {
   @@index([type, agentId]) // Already exists, but ensure it covers new usage
 }
 
+model Human {
+  id       String @id @default(cuid())
+  nickname String @unique
+
+  identityId String @unique
+
+  identity Identity? @relation("IdentityHuman")
+}
+
+model Agent {
+  id         String @id @default(cuid())
+  nickname   String @unique
+  model      String
+  profession Json
+
+  identityId String @unique
+
+  identity Identity? @relation("IdentityAgent")
+
+  @@index([nickname])
+  @@index([model])
+}
+
 //============================
 // Chat System - List
 //============================
@@ -117,7 +96,7 @@ model Chat {
   nickname     String   @unique
   description  String
   membersLimit Int
-  metadata     Json     @default("{}")
+  metadata     Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -136,15 +115,10 @@ model Chat {
 model ChatRole {
   id          String @id @default(cuid())
   nickname    String @unique
-  permissions Json   @default("{}") // chat permission
+  permissions Json // chat permission
   description String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   chatMembers ChatMember[] @relation("RoleChatMember")
-
-  @@index([createdAt])
 }
 
 model ChatMember {
@@ -447,4 +421,16 @@ model IdentityTag {
   @@id([identityId, tagId])
   @@index([identityId])
   @@index([tagId])
+}
+
+//============================
+// Cache System
+//============================
+model CacheEntry {
+  id        String @id @default(cuid())
+  key       String @unique
+  value     Json
+  expiresAt DateTime?
+
+  @@index([expiresAt])
 }
