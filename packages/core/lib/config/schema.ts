@@ -18,6 +18,20 @@ const InfoConfigSchema = z.object({
 });
 
 //================================
+// Network Configurations
+//================================
+const NetworkConfigSchema = z.object({
+  proxy: z
+    .object({
+      noProxy: z.array(z.string()).optional(),
+      httpProxy: z.string().optional(),
+      httpsProxy: z.string().optional(),
+      socksProxy: z.string().optional(),
+    })
+    .optional(),
+});
+
+//================================
 // Database Configurations
 //================================
 
@@ -41,6 +55,7 @@ const ServerConfigSchema = z.object({
 
 export const ConfigSchema = z.object({
   info: InfoConfigSchema.optional(),
+  network: NetworkConfigSchema.optional(),
   database: DatabaseConfigSchema.optional(),
   server: ServerConfigSchema.optional(),
 });
