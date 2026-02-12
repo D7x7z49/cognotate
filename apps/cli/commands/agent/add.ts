@@ -38,6 +38,7 @@ const handleAskMode = async (): Promise<InputArg> => {
   // step 3: Get API key
   const existingKeys = await getProviderKeys();
   let apiKey = existingKeys[provider];
+  let saveFlag = false;
 
   if (!apiKey) {
     apiKey = await input({
@@ -46,16 +47,16 @@ const handleAskMode = async (): Promise<InputArg> => {
     });
 
     Bun.env[`${provider.toUpperCase()}_API_KEY`] = apiKey;
-  }
 
-  // step 4: Ask to save API key
-  const saveFlag = await select({
-    message: `Do you want to save the API key for ${provider} for future use?`,
-    choices: [
-      { name: "Yes", value: true },
-      { name: "No", value: false },
-    ],
-  });
+    // step 4: Ask to save API key (only when newly entered)
+    saveFlag = await select({
+      message: `Do you want to save the API key for ${provider} for future use?`,
+      choices: [
+        { name: "Yes", value: true },
+        { name: "No", value: false },
+      ],
+    });
+  }
 
   // step 5: Fetch model list
   console.log(`Fetching models for ${provider}...`);
@@ -157,8 +158,13 @@ export const addAgentAction = async (options?: {
       profession: DEFAULT_AGENT_PERMISSION,
     });
 
+    if (!result.success) {
+      console.error(`Failed to create agent: ${result.data}`);
+      process.exit(1);
+    }
+
     console.log(
-      `Agent "${result.nickname}" created successfully with ID: ${result.id}`,
+      `Agent "${result.data.nickname}" created successfully with ID: ${result.data.id}`,
     );
   } catch (error) {
     console.error(
