@@ -46,6 +46,16 @@
 3. Be Cautious: Understand the impact before running commands that change history (`git rebase`, `git reset`) or remove dependencies (`bun remove`).
 4. Consult Experience: When stuck on a recurring problem, check `share/` for documented solutions.
 
+## FILESYSTEM PRACTICES
+
+For command-line requirements:
+
+- When searching project file contents, use `ripgrep` for searching.
+- When processing JSON data, use `jq` for querying.
+- When processing YAML data, use `yq` for querying.
+
+NOTE: When error, use `--help` option.
+
 ## FURTHER ASSISTANCE
 
 If you need help beyond the scope of these tools and patterns, you can use MCP (Model Context Protocol) to get help.

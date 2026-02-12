@@ -21,6 +21,7 @@ export const infoAgent = async (input: InfoAgentInput) => {
       nickname: true,
       model: true,
       profession: true,
+      enabled: true,
       identity: true,
     },
   });
@@ -30,11 +31,16 @@ export const infoAgent = async (input: InfoAgentInput) => {
 
 export const listAgent = async (input: ListAgentInput) => {
   const prisma = await getPrisma();
+
+  const whereCondition = {
+    identity: { isNot: null },
+    ...(input.enabled === "enabled" && { enabled: true }),
+    ...(input.enabled === "disabled" && { enabled: false }),
+  };
+
   const [agents, total] = await Promise.all([
     prisma.agent.findMany({
-      where: {
-        identity: { isNot: null },
-      },
+      where: whereCondition,
       select: {
         nickname: true,
         model: true,
@@ -48,9 +54,7 @@ export const listAgent = async (input: ListAgentInput) => {
       skip: input.skip,
     }),
     prisma.agent.count({
-      where: {
-        identity: { isNot: null },
-      },
+      where: whereCondition,
     }),
   ]);
 
@@ -141,6 +145,40 @@ export const updateAgent = async (input: UpdateAgentInput) => {
       },
       include: { identity: true },
     });
+    return { success: true, data: updated };
+  });
+};
+
+export const toggleAgentEnabled = async (
+  nickname: string,
+  enabled: boolean,
+) => {
+  const prisma = await getPrisma();
+
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.agent.findUnique({
+      where: {
+        nickname,
+        identity: { isNot: null },
+      },
+    });
+
+    if (!existing) {
+      return {
+        success: false,
+        data: "Agent not found",
+      };
+    }
+
+    const updated = await tx.agent.update({
+      where: { nickname },
+      data: { enabled },
+      select: {
+        nickname: true,
+        enabled: true,
+      },
+    });
+
     return { success: true, data: updated };
   });
 };

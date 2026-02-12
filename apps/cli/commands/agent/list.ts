@@ -6,12 +6,34 @@ export const listAgentAction = async (options?: {
   take?: number;
   skip?: number;
   orderBy?: "asc" | "desc";
+  enabled?: boolean;
+  disabled?: boolean;
 }) => {
   try {
+    // Check for conflicting flags
+    if (options?.enabled && options?.disabled) {
+      console.error(
+        "Error: --enabled and --disabled flags cannot be used together",
+      );
+      process.exit(1);
+    }
+
+    // Determine enabled filter
+    let enabledFilter: "all" | "enabled" | "disabled" = "all";
+
+    if (options?.enabled) {
+      enabledFilter = "enabled";
+    }
+
+    if (options?.disabled) {
+      enabledFilter = "disabled";
+    }
+
     const input = ListAgentSchema.parse({
       take: options?.take ?? 16,
       skip: options?.skip ?? 0,
       orderBy: options?.orderBy ?? "asc",
+      enabled: enabledFilter,
     });
 
     const result = await listAgent(input);

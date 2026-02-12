@@ -39,6 +39,7 @@ export const ListAgentSchema = z.object({
   take: z.number().min(1).max(64).optional().default(16),
   skip: z.number().min(0).optional().default(0),
   orderBy: z.enum(["asc", "desc"]).optional().default("asc"),
+  enabled: z.enum(["all", "enabled", "disabled"]).optional().default("all"),
 });
 
 export type ListAgentInput = z.infer<typeof ListAgentSchema>;

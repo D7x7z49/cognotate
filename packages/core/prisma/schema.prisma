@@ -63,6 +63,7 @@ model Agent {
   nickname   String @unique
   model      String
   profession Json
+  enabled    Boolean @default(false)
 
   identityId String @unique
 
@@ -70,6 +71,7 @@ model Agent {
 
   @@index([nickname])
   @@index([model])
+  @@index([enabled])
 }
 
 //============================

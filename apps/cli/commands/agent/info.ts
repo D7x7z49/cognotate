@@ -25,6 +25,7 @@ export const infoAgentAction = async (
     const output: string[] = [];
     output.push(`Agent: ${agent.nickname}`);
     output.push(`Model: ${agent.model}`);
+    output.push(`Enabled: ${agent.enabled}`);
 
     // Handle different profession formats
     if (Array.isArray(agent.profession)) {
