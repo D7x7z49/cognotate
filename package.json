@@ -6,8 +6,9 @@
     "prepare": "husky",
     "fmt": "prettier --write .",
     "dev:cli": "bun run --filter '@cognotate/cli' dev",
+    "build:all": "bun run --filter '*' build",
     "test:all": "bun run --filter '*' test",
-    "build:all": "bun run --filter '*' build"
+    "clean": "bun scripts/clean-workspaces.mjs"
   },
   "workspaces": {
     "packages": [
