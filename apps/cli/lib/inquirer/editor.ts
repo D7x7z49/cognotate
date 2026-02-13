@@ -1,6 +1,7 @@
 // apps/cli/lib/inquirer/editor.ts
 
 import { input, select } from "@inquirer/prompts";
+import { cliLogger as logger } from "@/lib/logger";
 
 export type ListItem = string;
 
@@ -23,7 +24,7 @@ export const createListEditor = (options: ListEditorOptions) => {
     let items = [...current];
 
     while (true) {
-      console.log(
+      logger.log(
         `\nCurrent ${listName}: ${items.length ? items.join(", ") : "none"}`,
       );
 
@@ -50,12 +51,12 @@ export const createListEditor = (options: ListEditorOptions) => {
         });
 
         items.push(value.trim());
-        console.log(`Added "${value}"`);
+        logger.log(`Added "${value}"`);
       }
 
       if (action === "remove") {
         if (!items.length) {
-          console.log(emptyMessage);
+          logger.log(emptyMessage);
           continue;
         }
 
@@ -65,7 +66,7 @@ export const createListEditor = (options: ListEditorOptions) => {
         });
 
         items = items.filter((item) => item !== toRemove);
-        console.log(`Removed "${toRemove}"`);
+        logger.log(`Removed "${toRemove}"`);
       }
     }
   };

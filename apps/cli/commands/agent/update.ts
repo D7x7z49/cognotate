@@ -20,6 +20,7 @@ import {
   editNetworkPermissions,
   editSystemPermissions,
 } from "@/lib/inquirer/permission";
+import { subCommandAgentLogger as logger } from "@/lib/logger";
 
 const InputArgSchema = UpdateAgentSchema.omit({ targetNickname: true });
 type InputArg = z.infer<typeof InputArgSchema>;
@@ -79,12 +80,12 @@ const handleAskMode = async (): Promise<InputArg> => {
 
       if (saveFlag) {
         await saveProviderKeys({ [provider]: apiKey });
-        console.log(`API key for ${provider} saved.`);
+        logger.find(`API key for ${provider} saved.`);
       }
     }
 
     // Fetch model list
-    console.log(`Fetching models for ${provider}...`);
+    logger.work(`Fetching models for ${provider}...`);
     const modelListResult = await getModelList(provider);
     if (!modelListResult.success) {
       console.error(`Failed to fetch models: ${modelListResult.error}`);
@@ -108,8 +109,8 @@ const handleAskMode = async (): Promise<InputArg> => {
     const model = `${provider}:${modelId}`;
     updateData.model = model;
   } else if (fieldsToUpdate === "profession") {
-    console.log("\n=== Agent Permissions Configuration ===");
-    console.log(
+    logger.step("\n=== Agent Permissions Configuration ===");
+    logger.step(
       "Configure the permissions for this agent. You can set network access controls and system operation permissions.",
     );
 
@@ -131,13 +132,12 @@ const handleAskMode = async (): Promise<InputArg> => {
     // Main permissions menu
     let configuring = true;
     while (configuring) {
-      console.log("\n--- Current Permissions Summary ---");
-      console.log(
+      const summaryLines = [
+        "\n--- Current Permissions Summary ---",
         `Network: outbound=${profession.network.outbound}, domains: whitelist(${profession.network.domains.whitelist.length}), blacklist(${profession.network.domains.blacklist.length})`,
-      );
-      console.log(
         `System: read=${profession.system.read}, write=${profession.system.write}, execute=${profession.system.execute}, commands: whitelist(${profession.system.commands.whitelist.length}), blacklist(${profession.system.commands.blacklist.length})`,
-      );
+      ];
+      logger.log(summaryLines.join("\n"));
 
       const permissionType = await select({
         message: "Which permissions would you like to configure?",
@@ -241,7 +241,7 @@ export const updateAgentAction = async (
       process.exit(1);
     }
 
-    console.log(
+    logger.find(
       `Agent "${result.data.nickname}" updated successfully with ID: ${result.data.id}`,
     );
   } catch (error) {

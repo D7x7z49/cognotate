@@ -1,6 +1,7 @@
 // apps/cli/commands/agent/info.ts
 
 import { infoAgent, infoAgentSchema } from "@cognotate/core/lib/agent";
+import { subCommandAgentLogger as logger } from "@/lib/logger";
 
 export const infoAgentAction = async (
   nickname: string,
@@ -17,13 +18,15 @@ export const infoAgentAction = async (
     }
 
     if (options?.format === "json") {
-      console.log(JSON.stringify(agent, null, 2));
+      // NOTE: convenient pipe handling
+      logger.log(JSON.stringify(agent, null, 2));
       return;
     }
 
     // Default formatted output - collect all lines for single print
     const output: string[] = [];
-    output.push(`Agent: ${agent.nickname}`);
+    output.push(`Agent Information:`);
+    output.push(`Name: ${agent.nickname}`);
     output.push(`Model: ${agent.model}`);
     output.push(`Enabled: ${agent.enabled}`);
 
@@ -60,7 +63,7 @@ export const infoAgentAction = async (
 
     output.push(`Created: ${agent.identity.createdAt.toISOString()}`);
 
-    console.log(output.join("\n"));
+    logger.find(output.join("\n"));
   } catch (error) {
     if (error instanceof Error && error.name === "ZodError") {
       console.error(`Invalid arguments: ${error.message}`);

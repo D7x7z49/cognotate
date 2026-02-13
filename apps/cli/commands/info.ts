@@ -2,6 +2,7 @@
 
 import { program } from "commander";
 import { getConfig } from "@cognotate/core/lib/config";
+import { cliLogger } from "@/lib/logger";
 
 // Safely format database URL for display (hide credentials)
 const formatPostgresqlUrl = (url: string): string => {
@@ -47,7 +48,7 @@ const infoAction = async () => {
     message.push(`- remote: N/A`);
   }
 
-  console.log(message.join("\n"));
+  cliLogger.find(message.join("\n"));
 };
 
 const infoCommand = () => {

@@ -1,6 +1,7 @@
 // apps/cli/commands/agent/list.ts
 
 import { listAgent, ListAgentSchema } from "@cognotate/core/lib/agent";
+import { subCommandAgentLogger as logger } from "@/lib/logger";
 
 export const listAgentAction = async (options?: {
   take?: number;
@@ -36,12 +37,14 @@ export const listAgentAction = async (options?: {
       enabled: enabledFilter,
     });
 
-    const result = await listAgent(input);
+    const messages: string[] = [];
 
-    console.log(`Total agents: ${result.total}`);
+    const result = await listAgent(input);
+    messages.push(`Total agents: ${result.total}`);
 
     if (result.agents.length === 0) {
-      console.log("No agents found.");
+      messages.push("No agents found.");
+      logger.find(messages.join("\n"));
       return;
     }
 
@@ -49,12 +52,13 @@ export const listAgentAction = async (options?: {
     const endIndex = input.skip + result.agents.length;
 
     for (const agent of result.agents) {
-      console.log(`- ${agent.nickname} | ${agent.model}`);
+      messages.push(`- ${agent.nickname} | ${agent.model}`);
     }
 
-    console.log(
-      `Listed agents: ${startIndex}~${endIndex}, ${result.agents.length}/${result.total}`,
-    );
+    messages.push(`Showing agents ${startIndex} to ${endIndex}`);
+    messages.push(`${result.agents.length}/${result.total} agents listed`);
+
+    logger.find(messages.join("\n"));
   } catch (error) {
     console.error(
       `Failed to list agents: ${error instanceof Error ? error.message : "Unknown error"}`,

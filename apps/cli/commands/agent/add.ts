@@ -15,6 +15,7 @@ import {
   saveProviderKeys,
   type ProviderValue,
 } from "@cognotate/core/lib/llm";
+import { subCommandAgentLogger as logger } from "@/lib/logger";
 
 const InputArgSchema = AddAgentSchema.omit({ profession: true });
 type InputArg = z.infer<typeof InputArgSchema>;
@@ -59,7 +60,7 @@ const handleAskMode = async (): Promise<InputArg> => {
   }
 
   // step 5: Fetch model list
-  console.log(`Fetching models for ${provider}...`);
+  logger.work(`Fetching models for ${provider}...`);
   const modelListResult = await getModelList(provider);
   if (!modelListResult.success) {
     console.error(`Failed to fetch models: ${modelListResult.error}`);
@@ -86,7 +87,7 @@ const handleAskMode = async (): Promise<InputArg> => {
   // Save API key after successful model fetching (implicit validation)
   if (saveFlag) {
     await saveProviderKeys({ [provider]: apiKey });
-    console.log(`API key for ${provider} saved.`);
+    logger.find(`API key for ${provider} saved.`);
   }
 
   const inputData: InputArg = { nickname, model };
@@ -163,7 +164,7 @@ export const addAgentAction = async (options?: {
       process.exit(1);
     }
 
-    console.log(
+    logger.find(
       `Agent "${result.data.nickname}" created successfully with ID: ${result.data.id}`,
     );
   } catch (error) {

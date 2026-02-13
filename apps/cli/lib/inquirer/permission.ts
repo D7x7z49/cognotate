@@ -6,6 +6,7 @@ import type {
 } from "@cognotate/core/lib/agent";
 import { createListEditor } from "./editor";
 import { select, confirm } from "@inquirer/prompts";
+import { cliLogger as logger } from "@/lib/logger";
 
 // ---------------------------------
 // Network Permissions Editor
@@ -40,10 +41,13 @@ async function editNetworkPermissions(
   };
 
   while (true) {
-    console.log("\nNetwork Permissions");
-    console.log(`  Outbound: ${p.outbound ? "yes" : "no"}`);
-    console.log(`  Whitelist: ${p.domains.whitelist.length ?? "none"}`);
-    console.log(`  Blacklist:  ${p.domains.blacklist.length ?? "none"}`);
+    const permissionLines = [
+      "\nNetwork Permissions",
+      `  Outbound: ${p.outbound ? "yes" : "no"}`,
+      `  Whitelist: ${p.domains.whitelist.length ?? "none"}`,
+      `  Blacklist:  ${p.domains.blacklist.length ?? "none"}`,
+    ];
+    logger.log(permissionLines.join("\n"));
 
     const action = await select({
       message: "Action:",
@@ -97,16 +101,15 @@ async function editSystemPermissions(
   };
 
   while (true) {
-    console.log("\nSystem Permissions");
-    console.log(`  Read:    ${p.read ? "yes" : "no"}`);
-    console.log(`  Write:   ${p.write ? "yes" : "no"}`);
-    console.log(`  Execute: ${p.execute ? "yes" : "no"}`);
-    console.log(
+    const permissionLines = [
+      "\nSystem Permissions",
+      `  Read:    ${p.read ? "yes" : "no"}`,
+      `  Write:   ${p.write ? "yes" : "no"}`,
+      `  Execute: ${p.execute ? "yes" : "no"}`,
       `  Whitelist commands: ${p.commands.whitelist.length ?? "none"}`,
-    );
-    console.log(
       `  Blacklist  commands: ${p.commands.blacklist.length ?? "none"}`,
-    );
+    ];
+    logger.log(permissionLines.join("\n"));
 
     const action = await select({
       message: "Action:",
