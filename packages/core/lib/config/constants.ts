@@ -14,17 +14,28 @@ export const ROOT = join(homedir(), HOME_NAME);
 export const ROOT_CONFIG = join(ROOT, "config.jsonc");
 export const ROOT_SECRET = join(ROOT, "secret.jsonc");
 
-export const SQLITE_DB = join(ROOT, "cognotate.db");
-
-// server constants
-export const DEFAULT_PORT = 13047;
+// logger constants
+export const LOGGER_ROOT = join(ROOT, "logs");
 
 // cache key constants
-export const CACHE_DIR = join(ROOT, "cache");
-
+export const CACHE_ROOT = join(ROOT, "cache");
 export const CACHE_FILE_KEY = createKeys({
-  namespace: CACHE_DIR,
+  namespace: CACHE_ROOT,
   sep: ":",
   encode: false,
   filepath: true,
 });
+
+// process constants
+export const PID_ROOT = join(ROOT, "pids");
+
+// database constants
+export const SQLITE_DB = join(ROOT, "cognotate.db");
+
+// engine constants
+export const ENGINE_NAME = `${COGNOTATE}-engine`;
+export const ENGINE_ROOT = join(ROOT, ENGINE_NAME);
+export const ENGINE_PORT = 3913;
+
+// server constants
+export const DEFAULT_PORT = 13047;
