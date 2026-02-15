@@ -11,7 +11,7 @@ import { subCommandEngineLogger as logger } from "@/lib/logger";
 
 export const runEngineAction = async (options?: { restart?: boolean }) => {
   try {
-    logger.step("Starting engine...");
+    logger.work("Starting engine...");
 
     const existing = await existingProcess(ENGINE_NAME);
     if (existing.existing && existing.info) {

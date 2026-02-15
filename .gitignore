@@ -38,6 +38,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 *.db
 
 # local
+.agents/skills/
+.cline/skills/
 .apiscope/
 share/
 tmp/
