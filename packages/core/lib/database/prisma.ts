@@ -1,4 +1,4 @@
-// packages/core/lib/database/client.ts
+// packages/core/lib/database/prisma.ts
 
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { getConfig } from "@/lib/config";
