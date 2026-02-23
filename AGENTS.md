@@ -63,6 +63,7 @@ If you need help beyond the scope of these tools and patterns, you can use MCP (
 - bun: <https://github.com/oven-sh/bun>
 - commander: <https://github.com/tj/commander.js>
 - prisma: <https://github.com/prisma/prisma>
+- pino: <https://deepwiki.com/pinojs/pino>
 - ai: <https://github.com/vercel/ai>
 
 NOTE: When stuck on recurring errors, conflicting documentation, or when corrected by the user, consult `share/` for documented experiences and use deepwiki to verify technical claims.

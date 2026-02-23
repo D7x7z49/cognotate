@@ -50,6 +50,14 @@ const ServerConfigSchema = z.object({
 });
 
 //================================
+// Log Configurations
+//================================
+
+const LogConfigSchema = z.object({
+  level: z.enum(["debug", "info", "warn", "error"]),
+});
+
+//================================
 // Main Config Schema
 //================================
 
@@ -58,6 +66,7 @@ export const ConfigSchema = z.object({
   network: NetworkConfigSchema.optional(),
   database: DatabaseConfigSchema.optional(),
   server: ServerConfigSchema.optional(),
+  log: LogConfigSchema.optional(),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;

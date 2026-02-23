@@ -39,6 +39,9 @@ export const DEFAULT_CONFIG: Config = {
   server: {
     port: DEFAULT_PORT,
   },
+  log: {
+    level: Bun.env.NODE_ENV === "production" ? "warn" : "info",
+  },
 };
 
 const getProjectInfo = async (): Promise<(string | undefined)[]> => {
