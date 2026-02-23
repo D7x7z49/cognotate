@@ -30,8 +30,11 @@ const engineCommand = () => {
   engine
     .command("log")
     .description("Show engine service logs")
-    .option("--follow", "Follow log output")
-    .option("--lines <number>", "Number of lines to show", parseInt)
+    .option(
+      "-n, --lines <number>",
+      "Number of lines to show (default: 20)",
+      parseInt,
+    )
     .action(logEngineAction);
 };
 
