@@ -2,7 +2,12 @@
 
 import { program } from "commander";
 import { COGNOTATE } from "@cognotate/core/lib/config";
-import { infoCommand, agentCommand, engineCommand } from "./commands";
+import {
+  infoCommand,
+  initCommand,
+  agentCommand,
+  engineCommand,
+} from "./commands";
 import packageInfo from "./package.json" assert { type: "json" };
 
 const bootProgram = async () => {
@@ -14,6 +19,7 @@ const bootProgram = async () => {
 
   // register commands
   infoCommand();
+  initCommand();
   agentCommand();
   engineCommand();
 };
