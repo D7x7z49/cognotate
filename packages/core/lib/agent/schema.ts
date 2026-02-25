@@ -29,11 +29,11 @@ export type NetworkPermission = z.infer<typeof NetworkPermissionSchema>;
 export type SystemPermission = z.infer<typeof SystemPermissionSchema>;
 export type AgentPermission = z.infer<typeof AgentPermissionSchema>;
 
-export const infoAgentSchema = z.object({
+export const InfoAgentSchema = z.object({
   nickname: z.string().min(1, "Nickname cannot be empty"),
 });
 
-export type InfoAgentInput = z.infer<typeof infoAgentSchema>;
+export type InfoAgentInput = z.infer<typeof InfoAgentSchema>;
 
 export const ListAgentSchema = z.object({
   take: z.number().min(1).max(64).optional().default(16),

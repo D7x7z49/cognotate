@@ -3,9 +3,9 @@
 import { UserType } from "@/generated/prisma/client";
 import { getPrisma } from "@/lib/database";
 import {
-  type AddAgentInput,
   type InfoAgentInput,
   type ListAgentInput,
+  type AddAgentInput,
   type UpdateAgentInput,
 } from "./schema";
 

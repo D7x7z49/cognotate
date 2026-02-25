@@ -51,11 +51,14 @@ model Identity {
 
 model Human {
   id       String @id @default(cuid())
-  nickname String @unique
+  host     String
+  nickname String
 
   identityId String @unique
 
   identity Identity? @relation("IdentityHuman")
+
+  @@unique([host, nickname])
 }
 
 model Agent {
