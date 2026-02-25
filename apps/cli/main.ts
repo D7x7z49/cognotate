@@ -6,6 +6,7 @@ import {
   infoCommand,
   initCommand,
   authCommand,
+  chatCommand,
   agentCommand,
   engineCommand,
 } from "./commands";
@@ -22,6 +23,7 @@ const bootProgram = async () => {
   infoCommand();
   initCommand();
   authCommand();
+  chatCommand();
   agentCommand();
   engineCommand();
 };

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-export const CreateChatSchema = z.object({
+export const AddChatSchema = z.object({
   nickname: z.string().min(1),
   type: z.enum(["PRIVATE", "GROUP"]),
   description: z.string().optional(),
@@ -10,4 +10,21 @@ export const CreateChatSchema = z.object({
   metadata: z.json().optional(),
 });
 
-export type CreateChatInput = z.infer<typeof CreateChatSchema>;
+export type AddChatInput = z.infer<typeof AddChatSchema>;
+
+export const ListChatSchema = z.object({
+  take: z.number().int().positive().default(16),
+  skip: z.number().int().nonnegative().default(0),
+  orderBy: z.enum(["asc", "desc"]).default("asc"),
+});
+
+export type ListChatInput = z.infer<typeof ListChatSchema>;
+
+export const JoinChatSchema = z.object({
+  chatNickname: z.string().min(1),
+  memberNickname: z.string().min(1),
+  human: z.string().min(1).optional(),
+  agent: z.string().min(1).optional(),
+});
+
+export type JoinChatInput = z.infer<typeof JoinChatSchema>;
