@@ -1,6 +1,6 @@
 // apps/cli/commands/agent/info.ts
 
-import { infoAgent, infoAgentSchema } from "@cognotate/core/lib/agent";
+import { infoAgent, InfoAgentSchema } from "@cognotate/core/lib/agent";
 import { subCommandAgentLogger as logger } from "@/lib/logger";
 
 export const infoAgentAction = async (
@@ -8,7 +8,7 @@ export const infoAgentAction = async (
   options?: { format?: string },
 ) => {
   try {
-    const input = infoAgentSchema.parse({ nickname });
+    const input = InfoAgentSchema.parse({ nickname });
 
     const agent = await infoAgent(input);
 

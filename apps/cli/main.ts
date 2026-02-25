@@ -5,6 +5,7 @@ import { COGNOTATE } from "@cognotate/core/lib/config";
 import {
   infoCommand,
   initCommand,
+  authCommand,
   agentCommand,
   engineCommand,
 } from "./commands";
@@ -20,6 +21,7 @@ const bootProgram = async () => {
   // register commands
   infoCommand();
   initCommand();
+  authCommand();
   agentCommand();
   engineCommand();
 };
