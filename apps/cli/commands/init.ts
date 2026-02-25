@@ -2,26 +2,26 @@
 
 import { program } from "commander";
 import { getConfig } from "@cognotate/core/lib/config";
-import { ChatType, createChat } from "@cognotate/core/lib/chat";
-import { cliLogger } from "@/lib/logger";
+import { ChatType, addChat } from "@cognotate/core/lib/chat";
+import { cliLogger as logger } from "@/lib/logger";
 
 const initAction = async () => {
   const config = await getConfig();
   const nickname = config.info.project?.name ?? "global";
 
-  cliLogger.step(`Creating Chat "${nickname}"`);
+  logger.step(`Creating Chat "${nickname}"`);
 
-  const result = await createChat({
+  const result = await addChat({
     nickname,
     type: ChatType.GROUP,
   });
 
   if (!result.success) {
-    cliLogger.warn(result.data);
+    logger.warn(result.data);
     return;
   }
 
-  cliLogger.find(
+  logger.find(
     `Created Chat "${result.data.id}" with nickname "${result.data.nickname}"`,
   );
 };
