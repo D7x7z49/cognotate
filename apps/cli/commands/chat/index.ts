@@ -26,7 +26,7 @@ export const chatCommand = () => {
   chat
     .command("join <chat-nickname>")
     .description("Join a chat")
-    .option("--as <nickname>", "Nickname to use in the chat")
+    .option("--as <member-nickname>", "Nickname to use in the chat")
     .option("--human <nickname@host>", "Human to join (format: nickname@host)")
     .option("--agent <nickname>", "Agent to join")
     .action(async (chatNickname, options) => {
