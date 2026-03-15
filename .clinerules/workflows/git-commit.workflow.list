@@ -1,0 +1,77 @@
+- (analyze) Analyze changed files for informed decision making
+  - Run: git diff --cached --name-only
+  - Show: List of staged files to help you choose appropriate commit type
+
+- (select-type) Choose commit type based on your understanding of the changes
+  - feat: A new feature (correlates with MINOR version bump)
+    (feat)
+  - fix: A bug fix (correlates with PATCH version bump)
+    (fix)
+  - docs: Documentation only changes
+    (docs)
+  - style: Code style changes (whitespace, formatting, missing semicolons, etc.)
+    (style)
+  - refactor: Code refactoring that doesn't fix bugs or add features
+    (refactor)
+  - perf: Performance improvements
+    (perf)
+  - test: Adding or correcting tests
+    (test)
+  - build: Changes affecting build system or external dependencies
+    (build)
+  - ci: Changes to CI configuration files and scripts
+    (ci)
+  - chore: Other changes that don't modify src or test files
+    (chore)
+  - revert: Reverting previous commits
+    (revert)
+
+- (breaking-change) Check for breaking changes
+  - Ask: Does this commit introduce breaking API changes?
+  - If yes: You can either add '!' after type/scope OR use BREAKING CHANGE footer
+    (breaking)
+
+- (scope) Provide scope if applicable
+  - What is the scope of this change? (e.g., component, module, file)
+  - Scope is optional - skip if unclear
+
+- (description) Write concise description
+  - Use imperative mood (e.g., "add" not "added" or "adds")
+  - Start with lowercase letter
+  - No period at the end
+  - Keep under 72 characters
+
+- (body) Add detailed explanation if needed
+  - Body is optional but recommended for complex changes
+  - Explain the motivation behind the change
+  - Describe alternatives considered
+  - Leave blank line before body content
+
+- (footer) Add footers if applicable
+  - BREAKING CHANGE: <description> (for breaking changes)
+  - Closes #<issue-number> (to close issues)
+  - Leave blank line before footer content
+
+- (format) Review complete commit message format
+  - @feat[1]: <type>(<scope>): <description>
+  - @fix[1]: <type>(<scope>): <description>
+  - @docs[1]: <type>(<scope>): <description>
+  - @style[1]: <type>(<scope>): <description>
+  - @refactor[1]: <type>(<scope>): <description>
+  - @perf[1]: <type>(<scope>): <description>
+  - @test[1]: <type>(<scope>): <description>
+  - @build[1]: <type>(<scope>): <description>
+  - @ci[1]: <type>(<scope>): <description>
+  - @chore[1]: <type>(<scope>): <description>
+  - @revert[1]: <type>(<scope>): <description>
+
+- (validate) Final validation checklist
+  - Ensure type selection reflects actual change intent (your judgment, not automated)
+  - Verify description is under 72 characters
+  - Check proper Conventional Commits structure:
+    <type>(<scope>): <description>
+
+    [body]
+
+    [footer]
+  - Confirm breaking changes are properly marked if applicable
