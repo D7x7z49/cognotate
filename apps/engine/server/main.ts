@@ -1,4 +1,4 @@
-// apps/cli/engine/main.ts
+// apps/engine/server/main.ts
 
 import { Elysia } from "elysia";
 import { getLogger } from "@cognotate/core/lib/logger";

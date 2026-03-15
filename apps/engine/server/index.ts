@@ -1,4 +1,4 @@
-// apps/cli/engine/index.ts
+// apps/engine/server/index.ts
 
 import { join } from "path";
 import {
@@ -30,6 +30,7 @@ if (import.meta.main) {
       },
     },
   });
+
   const app = await genEngine();
   const server = app.listen(ENGINE_PORT, () => {
     logger.info(`[+] engine on port ${ENGINE_PORT}`);

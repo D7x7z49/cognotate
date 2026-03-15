@@ -2,15 +2,7 @@
 
 export * from "./constants";
 
-import { join } from "path";
-
-import {
-  CONFIG_NAME,
-  DEFAULT_PORT,
-  ROOT,
-  ROOT_CONFIG,
-  SQLITE_DB,
-} from "./constants";
+import { ROOT_CONFIG, SQLITE_DB } from "./constants";
 import { ConfigSchema, type Config, type ReturnConfig } from "./schema";
 
 declare global {
@@ -36,41 +28,13 @@ export const DEFAULT_CONFIG: Config = {
   database: {
     local: `file:${SQLITE_DB}`,
   },
-  server: {
-    port: DEFAULT_PORT,
-  },
   log: {
     level: Bun.env.NODE_ENV === "production" ? "warn" : "info",
   },
 };
 
-const getProjectInfo = async (): Promise<(string | undefined)[]> => {
-  const [identityResult, pathResult] = await Promise.all([
-    Bun.$`git rev-list --max-parents=0 HEAD`.nothrow().quiet(),
-    Bun.$`git rev-parse --show-toplevel`.nothrow().quiet(),
-  ]);
-
-  if (identityResult.exitCode !== 0) {
-    console.error(identityResult.stderr.toString());
-    return [undefined, undefined];
-  }
-  if (pathResult.exitCode !== 0) {
-    console.error(pathResult.stderr.toString());
-    return [undefined, undefined];
-  }
-
-  return [
-    identityResult.stdout.toString().trim(),
-    pathResult.stdout.toString().trim(),
-  ];
-};
-
 const loadConfig = async (): Promise<ReturnConfig> => {
   let rootConfig: Config = {} as Config;
-  let projectConfig: Config = {} as Config;
-
-  const [projectIdentity, projectPath] = await getProjectInfo();
-  const projectConfigPath = projectPath ? join(projectPath, CONFIG_NAME) : null;
 
   // ensure root config
   if (await Bun.file(ROOT_CONFIG).exists()) {
@@ -80,30 +44,11 @@ const loadConfig = async (): Promise<ReturnConfig> => {
     const rootResult = ConfigSchema.safeParse(rootConfigModule.default);
     if (rootResult.success) rootConfig = rootResult.data;
   }
-  // ensure project config
-  if (projectConfigPath && (await Bun.file(projectConfigPath).exists())) {
-    const projectConfigModule = await import(projectConfigPath, {
-      with: { type: "jsonc" },
-    });
-    const projectResult = ConfigSchema.safeParse(projectConfigModule.default);
-    if (projectResult.success) projectConfig = projectResult.data;
-  }
 
   // merge
   const mergedConfig: Config = {
     ...DEFAULT_CONFIG,
     ...rootConfig,
-    ...projectConfig,
-    info: {
-      root: ROOT,
-      project: projectIdentity
-        ? {
-            identity: projectIdentity!,
-            name: projectPath!.split("/").slice(-1)[0]!,
-            path: projectPath!,
-          }
-        : undefined,
-    },
   };
 
   return mergedConfig as ReturnConfig;

@@ -3,18 +3,22 @@
 import { z } from "zod";
 
 //================================
-// Info Configurations
+// Database Configurations
 //================================
 
-const InfoConfigSchema = z.object({
-  root: z.string(),
-  project: z
-    .object({
-      identity: z.string(),
-      name: z.string(),
-      path: z.string(),
-    })
-    .optional(),
+export const DatabaseConfigSchema = z.object({
+  // local use SQLite
+  local: z.string(),
+  // remote use PostgreSQL, using apps/server works with multiple remote DBs
+  remote: z.array(z.string()).optional(),
+});
+
+//================================
+// Log Configurations
+//================================
+
+const LogConfigSchema = z.object({
+  level: z.enum(["debug", "info", "warn", "error"]),
 });
 
 //================================
@@ -32,41 +36,13 @@ const NetworkConfigSchema = z.object({
 });
 
 //================================
-// Database Configurations
-//================================
-
-export const DatabaseConfigSchema = z.object({
-  // local use SQLite
-  local: z.string(),
-  // remote use PostgreSQL, using apps/server works with multiple remote DBs
-  remote: z.array(z.string()).optional(),
-});
-
-//================================
-// Server Configurations
-//================================
-const ServerConfigSchema = z.object({
-  port: z.number().optional(),
-});
-
-//================================
-// Log Configurations
-//================================
-
-const LogConfigSchema = z.object({
-  level: z.enum(["debug", "info", "warn", "error"]),
-});
-
-//================================
 // Main Config Schema
 //================================
 
 export const ConfigSchema = z.object({
-  info: InfoConfigSchema.optional(),
-  network: NetworkConfigSchema.optional(),
-  database: DatabaseConfigSchema.optional(),
-  server: ServerConfigSchema.optional(),
   log: LogConfigSchema.optional(),
+  database: DatabaseConfigSchema.optional(),
+  network: NetworkConfigSchema.optional(),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;

@@ -1,15 +1,8 @@
-// apps/cli/main.ts
+// apps/engine/main.ts
 
 import { program } from "commander";
 import { COGNOTATE } from "@cognotate/core/lib/config";
-import {
-  infoCommand,
-  initCommand,
-  authCommand,
-  chatCommand,
-  agentCommand,
-  engineCommand,
-} from "./commands";
+import { serverCommand } from "./commands";
 import packageInfo from "./package.json" assert { type: "json" };
 
 const bootProgram = async () => {
@@ -20,12 +13,7 @@ const bootProgram = async () => {
     .description(packageInfo.description);
 
   // register commands
-  infoCommand();
-  initCommand();
-  authCommand();
-  chatCommand();
-  agentCommand();
-  engineCommand();
+  serverCommand();
 };
 
 const runCLI = async () => {

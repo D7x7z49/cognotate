@@ -1,4 +1,4 @@
-// apps/cli/index.ts
+// apps/engine/index.ts
 
 import { runCLI } from "./main.ts";
 
