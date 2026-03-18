@@ -17,7 +17,7 @@ export const runAction = async (options?: { restart?: boolean }) => {
 
   logger.sect(ACTION);
 
-  logger.work("running engine...");
+  logger.step("running engine.");
   const existing = await existingProcess(ENGINE_NAME);
   if (existing.existing && existing.info) {
     logger.find(`pid file exists (PID: ${existing.info.pid}).`);
@@ -27,7 +27,7 @@ export const runAction = async (options?: { restart?: boolean }) => {
       process.exit(1);
     }
 
-    logger.work("restarting engine...");
+    logger.step("restarting engine.");
     try {
       process.kill(existing.info.pid);
       clearPidInfo(ENGINE_NAME);

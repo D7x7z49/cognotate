@@ -9,7 +9,7 @@ export const ACTION = "Stop Cognotate Engine";
 export const stopAction = async () => {
   logger.sect(ACTION);
 
-  logger.work("checking engine status...");
+  logger.step("checking engine status.");
   const existing = await existingProcess(ENGINE_NAME);
   if (!existing.existing || !existing.info) {
     logger.find("engine is not running.");

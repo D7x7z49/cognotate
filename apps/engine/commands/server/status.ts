@@ -18,7 +18,7 @@ function formatUptime(ms: number): string {
 export const statusAction = async () => {
   logger.sect(ACTION);
 
-  logger.work("checking engine status...");
+  logger.step("checking engine status.");
   const existing = await existingProcess(ENGINE_NAME);
   if (existing.existing && existing.info) {
     try {

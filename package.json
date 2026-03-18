@@ -16,12 +16,14 @@
       "apps/*"
     ],
     "catalog": {
-      "zod": "^4.3.6"
+      "zod": "^4.3.6",
+      "lodash": "^4.17.23"
     },
     "catalogs": {
       "types": {
+        "typescript": "^5",
         "@types/bun": "latest",
-        "typescript": "^5"
+        "@types/lodash": "^4.17.24"
       }
     }
   },
