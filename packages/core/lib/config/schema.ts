@@ -1,6 +1,7 @@
 // packages/core/lib/config/schema.ts
 
 import { z } from "zod";
+import { ProviderSchema } from "@/lib/llm/schema";
 
 //================================
 // Database Configurations
@@ -43,6 +44,7 @@ export const ConfigSchema = z.object({
   log: LogConfigSchema.optional(),
   database: DatabaseConfigSchema.optional(),
   network: NetworkConfigSchema.optional(),
+  providers: z.array(ProviderSchema).optional(),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;

@@ -2,6 +2,7 @@
 
 import { program } from "commander";
 import { COGNOTATE } from "@cognotate/core/lib/config";
+import { bootstrap } from "./bootstrap";
 import { serverCommand } from "./commands";
 import packageInfo from "./package.json" assert { type: "json" };
 
@@ -17,6 +18,7 @@ const bootProgram = async () => {
 };
 
 const runCLI = async () => {
+  await bootstrap();
   await bootProgram();
   await program.parseAsync(process.argv);
 };

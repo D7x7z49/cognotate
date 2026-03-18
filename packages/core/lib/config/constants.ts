@@ -11,7 +11,6 @@ export const HOME_NAME = `.${COGNOTATE}`;
 
 export const ROOT = join(homedir(), HOME_NAME);
 export const ROOT_CONFIG = join(ROOT, "config.jsonc");
-export const ROOT_SECRET = join(ROOT, "secret.jsonc");
 
 // cache key constants
 export const CACHE_ROOT = join(ROOT, "cache");

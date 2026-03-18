@@ -8,7 +8,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createXai } from "@ai-sdk/xai";
 import { PROVIDER_LIST, type ProviderValue } from "./constants";
-import { getProviderKeys } from "./secret";
+import { getConfig } from "../config";
 
 type ProviderHub = ReturnType<typeof createProviderRegistry>;
 
@@ -31,28 +31,36 @@ const getProviderHubState = () => {
   return globalThis.__cognotate_provider_hub;
 };
 
-const PROVIDER_CREATORS = {
-  [PROVIDER_LIST.OPENAI]: createOpenAI,
-  [PROVIDER_LIST.ANTHROPIC]: createAnthropic,
-  [PROVIDER_LIST.GOOGLE]: createGoogleGenerativeAI,
-  [PROVIDER_LIST.XAI]: createXai,
-  [PROVIDER_LIST.DEEPSEEK]: createDeepSeek,
-  [PROVIDER_LIST.OPENROUTER]: createOpenRouter,
-} as const;
-
 const loadHub = async (): Promise<ProviderHub> => {
-  const keys = await getProviderKeys();
+  const config = await getConfig();
+  if (!config.providers) {
+    return createProviderRegistry({});
+  }
 
-  const entries = Object.entries(PROVIDER_CREATORS)
-    .flatMap(([id, genProvider]) => {
-      const apiKey = keys[id as ProviderValue];
-      if (!apiKey) return [];
-      const provider = genProvider({ apiKey });
-      return provider ? [[id, provider]] : [];
+  const providerMap = config.providers
+    .map((provider) => {
+      const { name, type, baseURL, apiKey } = provider;
+      const info = { baseURL, apiKey };
+      switch (type) {
+        case "openai":
+          return [name, createOpenAI(info)];
+        case "deepseek":
+          return [name, createDeepSeek(info)];
+        case "anthropic":
+          return [name, createAnthropic(info)];
+        case "google":
+          return [name, createGoogleGenerativeAI(info)];
+        case "openrouter":
+          return [name, createOpenRouter(info)];
+        case "xai":
+          return [name, createXai(info)];
+        default:
+          return null;
+      }
     })
-    .filter(Boolean);
+    .filter((item) => item !== null);
 
-  return createProviderRegistry(Object.fromEntries(entries));
+  return createProviderRegistry(Object.fromEntries(providerMap));
 };
 
 const getProviderHub = (force = false): Promise<ProviderHub> => {
