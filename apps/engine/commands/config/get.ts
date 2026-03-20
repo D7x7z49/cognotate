@@ -1,7 +1,7 @@
 // apps/engine/commands/config/get.ts
 
-import z from "zod";
 import _ from "lodash";
+import { z } from "zod";
 import { ConfigSchema, refreshConfig } from "@cognotate/core/lib/config";
 import { transformJsonPathToSchemaPath } from "@cognotate/core/lib/utils";
 import { cliLogger as logger } from "@/lib/logger";

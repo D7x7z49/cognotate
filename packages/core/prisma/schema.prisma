@@ -13,6 +13,15 @@ datasource db {
   provider = "sqlite"
 }
 
+// add elysia prismabox
+generator prismabox {
+  provider                    = "prismabox"
+  typeboxImportDependencyName = "elysia"
+  typeboxImportVariableName   = "t"
+  inputModel                  = true
+  output                      = "../generated/prismabox"
+}
+
 //============================
 // Base
 //============================
@@ -22,13 +31,156 @@ enum UserType {
   AGENT
 }
 
-model Identity {
-  id       String @id @default(cuid())
-  nickname String @unique
+model User {
+  id   String   @id @default(cuid())
+  type UserType
 
-  type       UserType
-  model      String
+  nickname String @unique
+  metadata Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  tags  Tag[]
+  chats Member[]
+
+  @@index([type])
+}
+
+//============================
+// Chat System - List
+//============================
+
+enum ChatType {
+  PRIVATE
+  GROUP
+}
+
+model Chat {
+  id   String   @id @default(cuid())
+  type ChatType
+
+  nickname String @unique
+  metadata Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime
+
+  tags  Tag[]
+  users Member[]
+}
+
+model Member {
+  id       String @id @default(cuid())
+  nickname String
+
+  metadata    Json
+  permissions Json
+
+  chatId String
+  userId String?
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  lastReadAt DateTime?
+
+  chat Chat  @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  messages Message[] @relation("MemberSendMessage")
+
+  branches Branch[] @relation("MemberCreateBranch")
+  contexts Context[] @relation("MemberCreateContext")
+
+  @@unique([chatId, userId])
+  @@unique([chatId, nickname])
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+  LINK
+}
+
+model Message {
+  id      String      @id @default(cuid())
+  type    MessageType
+  content Json
+
+  authorId  String
+  replyToId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author  Member   @relation("MemberSendMessage", fields: [authorId], references: [id], onDelete: Cascade)
+  replyTo Message? @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+
+  replies Message[] @relation("MessageReplies")
+}
+
+model Branch {
+  id       String @id @default(cuid())
+  nickname String
+
+  authorId String
+
+  rootId    String
+  currentId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author Member @relation("MemberCreateBranch", fields: [authorId], references: [id], onDelete: Cascade)
+
+  root    Context @relation("RootToBranch", fields: [rootId], references: [id], onDelete: Restrict)
+  current Context @relation("CurrentToBranch", fields: [currentId], references: [id], onDelete: Restrict)
+
+  @@unique([authorId, nickname])
+}
+
+model Context {
+  id      String @id @default(cuid())
+  content Json
+
+  authorId String
+
+  prevId String?
+  nextId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author Member @relation("MemberCreateContext", fields: [authorId], references: [id], onDelete: Cascade)
+
+  prev Context? @relation("ContextPrev", fields: [prevId], references: [id], onDelete: SetNull)
+  next Context? @relation("ContextNext", fields: [nextId], references: [id], onDelete: SetNull)
+
+  rootBranchs    Branch[]  @relation("RootToBranch")
+  currentBranchs Branch[]  @relation("CurrentToBranch")
+  prevContexts   Context[] @relation("ContextPrev")
+  nextContexts   Context[] @relation("ContextNext")
+}
+
+//============================
+// Tag System
+//============================
+
+model Tag {
+  id          String @id @default(cuid())
+  nickname    String @unique
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+  chats Chat[]
+
+  @@index([nickname])
+  @@index([createdAt])
 }

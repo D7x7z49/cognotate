@@ -1,7 +1,7 @@
 // apps/engine/commands/config/set.ts
 
-import z from "zod";
 import _ from "lodash";
+import { z } from "zod";
 import { ConfigSchema, ROOT_CONFIG } from "@cognotate/core/lib/config";
 import {
   transformJsonPathToSchemaPath,
