@@ -1,0 +1,20 @@
+{
+  "name": "@cognotate/prisma-generator",
+  "module": "index.ts",
+  "type": "module",
+  "bin": {
+    "cognotate-prisma-generator": "./index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@prisma/generator": "^7.5.0",
+    "@prisma/generator-helper": "^7.5.0",
+    "@prisma/internals": "^7.5.0",
+    "zod": "catalog:"
+  }
+}

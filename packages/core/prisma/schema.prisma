@@ -3,6 +3,12 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+generator zod {
+  runtime  = "bun"
+  provider = "cognotate-prisma-generator"
+  output   = "../generated/zod"
+}
+
 generator client {
   runtime  = "bun"
   provider = "prisma-client"
@@ -11,15 +17,6 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-}
-
-// add elysia prismabox
-generator prismabox {
-  provider                    = "prismabox"
-  typeboxImportDependencyName = "elysia"
-  typeboxImportVariableName   = "t"
-  inputModel                  = true
-  output                      = "../generated/prismabox"
 }
 
 //============================

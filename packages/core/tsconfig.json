@@ -5,7 +5,7 @@
     "paths": {
       "@/*": ["./*"],
       "@/prisma/*": ["./generated/prisma/*"],
-      "@/prismabox/*": ["./generated/prismabox/*"]
+      "@/zod/*": ["./generated/zod/*"]
     }
   }
 }

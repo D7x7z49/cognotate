@@ -16,10 +16,10 @@
     "db:migrate:reset": "bunx --bun prisma migrate reset"
   },
   "devDependencies": {
+    "@cognotate/prisma-generator": "workspace:*",
     "@types/bun": "catalog:types",
     "@types/lodash": "catalog:types",
-    "prisma": "^7.3.0",
-    "prismabox": "^1.1.26"
+    "prisma": "^7.5.0"
   },
   "peerDependencies": {
     "typescript": "catalog:types"
@@ -31,7 +31,7 @@
     "@ai-sdk/openai": "^3.0.25",
     "@ai-sdk/xai": "^3.0.46",
     "@openrouter/ai-sdk-provider": "^2.1.1",
-    "@prisma/adapter-libsql": "^7.3.0",
+    "@prisma/adapter-libsql": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "ai": "^6.0.64",
     "jsonc-parser": "^3.3.1",

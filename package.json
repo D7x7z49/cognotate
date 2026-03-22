@@ -8,6 +8,7 @@
     "dev:cli": "bun run --filter '@cognotate/engine' dev",
     "build:all": "bun run --filter '*' build",
     "test:all": "bun run --filter '*' test",
+    "db:update": "bun run --filter '@cognotate/core' db:gen && bun run --filter '@cognotate/core' db:push:force",
     "clean": "bun scripts/clean-workspaces.mjs"
   },
   "workspaces": {
