@@ -12,9 +12,9 @@ function mapScalar(type: string): string {
     case "String":
       return "z.string()";
     case "Int":
-      return "z.number().int()";
+      return "z.coerce.number().int()";
     case "Float":
-      return "z.number()";
+      return "z.coerce.number()";
     case "Boolean":
       return "z.boolean()";
     case "DateTime":
