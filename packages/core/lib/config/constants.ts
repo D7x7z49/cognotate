@@ -5,6 +5,11 @@ import { join } from "path";
 
 import { createKeys } from "@/lib/cache";
 
+// warning info
+if (!Bun.env.ENGINE_JWT_SECRET) {
+  throw new Error("ENGINE_JWT_SECRET is not set.");
+}
+
 // base constants
 export const COGNOTATE = "cognotate";
 export const HOME_NAME = `.${COGNOTATE}`;
@@ -31,6 +36,7 @@ export const LOGGER_ROOT = join(ROOT, "logs");
 export const ENGINE_NAME = `${COGNOTATE}-engine`;
 export const ENGINE_ROOT = join(ROOT, ENGINE_NAME);
 export const ENGINE_PORT = 3913;
+export const ENGINE_JWT_SECRET = Bun.env.ENGINE_JWT_SECRET;
 
 // process constants
 export const PID_ROOT = join(ROOT, "pids");

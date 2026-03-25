@@ -1,4 +1,4 @@
 // packages/core/lib/handler/user/index.ts
 
 export * from "./schema";
-export { listUser } from "./db";
+export { getUserById, addUser, listUser } from "./db";
