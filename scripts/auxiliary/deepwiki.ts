@@ -52,7 +52,7 @@ async function call(tool: string, args: any): Promise<string> {
       method: "tools/call",
       params: { name: tool, arguments: args },
     }),
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(30_000),
   });
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
