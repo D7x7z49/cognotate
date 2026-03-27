@@ -34,7 +34,7 @@ export const authMiddleware = new Elysia({ name: "middleware/auth" })
           return status(401, "Missing authentication token");
         }
 
-        const payload = await jwt.verify(bearer);
+        const payload = await jwt.verify(token);
 
         // JWT payload must contain string id
         if (!payload || typeof payload.id !== "string") {
