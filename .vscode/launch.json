@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Debug Engine Server (dev:server)",
+      "program": "${workspaceFolder}/apps/engine/server/index.ts",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/engine",
+      "env": {},
+      "strictEnv": false,
+      "watchMode": false,
+      "stopOnEntry": false,
+      "noDebug": false,
+      "runtime": "bun",
+      "runtimeArgs": []
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Debug Engine Server (Watch Mode)",
+      "program": "${workspaceFolder}/apps/engine/server/index.ts",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/engine",
+      "env": {},
+      "strictEnv": false,
+      "watchMode": true,
+      "stopOnEntry": false,
+      "noDebug": false,
+      "runtime": "bun",
+      "runtimeArgs": []
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "Debug Engine Server (Hot Reload)",
+      "program": "${workspaceFolder}/apps/engine/server/index.ts",
+      "args": [],
+      "cwd": "${workspaceFolder}/apps/engine",
+      "env": {},
+      "strictEnv": false,
+      "watchMode": "hot",
+      "stopOnEntry": false,
+      "noDebug": false,
+      "runtime": "bun",
+      "runtimeArgs": []
+    }
+  ]
+}
