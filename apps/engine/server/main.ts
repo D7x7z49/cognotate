@@ -6,7 +6,7 @@ import { openapi, fromTypes } from "@elysiajs/openapi";
 import { COGNOTATE } from "@cognotate/core/lib/config";
 import { getLogger } from "@cognotate/core/lib/logger";
 import { authMiddleware, authRoute } from "./middleware/auth";
-import { userRoute } from "./routes";
+import { userRoute, agentRoute } from "./routes";
 import packageInfo from "@/package.json" assert { type: "json" };
 
 const getHello = () => {
@@ -47,7 +47,8 @@ export const genEngine = async () => {
     .use(authMiddleware)
     .get("/me", ({ user }) => user, { isAuth: true })
     .use(authRoute)
-    .use(userRoute);
+    .use(userRoute)
+    .use(agentRoute);
 
   return app;
 };

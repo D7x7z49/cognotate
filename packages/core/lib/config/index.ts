@@ -2,4 +2,4 @@
 
 export * from "./constants";
 export * from "./schema";
-export { getConfig, refreshConfig } from "./hub";
+export { getConfig, refreshConfig, getProviderModelMatrix } from "./hub";

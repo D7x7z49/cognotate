@@ -1,14 +1,13 @@
 // packages/core/lib/llm/hub.ts
 
 import { createProviderRegistry } from "ai";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createDeepSeek } from "@ai-sdk/deepseek";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createXai } from "@ai-sdk/xai";
-import { PROVIDER_LIST, type ProviderValue } from "./constants";
-import { getConfig } from "../config";
+import { getConfig } from "@/lib/config";
 
 type ProviderHub = ReturnType<typeof createProviderRegistry>;
 

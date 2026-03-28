@@ -35,9 +35,9 @@ export const addUserSchema = z.object({
     .string()
     .min(USER_NICKNAME_MIN_LENGTH)
     .max(USER_NICKNAME_MAX_LENGTH),
-  metadata: z.json().optional().default({}),
 });
 
 export type GetUserByIdInput = z.infer<typeof getUserByIdSchema>;
 export type ListUserInput = z.infer<typeof listUserSchema>;
 export type AddUserInput = z.infer<typeof addUserSchema>;
+export { UserType };

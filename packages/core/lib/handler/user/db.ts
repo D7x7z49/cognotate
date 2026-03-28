@@ -32,7 +32,7 @@ export const addUser = async (input: AddUserInput): Promise<User> => {
     create: {
       type: input.type,
       nickname: input.nickname,
-      metadata: input.metadata ?? {},
+      metadata: {},
     },
   });
   return result;

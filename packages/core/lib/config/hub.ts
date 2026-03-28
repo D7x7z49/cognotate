@@ -74,4 +74,14 @@ const refreshConfig = async (): Promise<ReturnConfig> => {
   return getConfig(true);
 };
 
-export { getConfig, refreshConfig };
+const getProviderModelMatrix = async (): Promise<
+  { provider: string; models: string[] }[]
+> => {
+  const hub = await getConfig();
+  return hub.providers.map((provider) => ({
+    provider: provider.name,
+    models: provider.models.map((model) => model.id),
+  }));
+};
+
+export { getConfig, refreshConfig, getProviderModelMatrix };
