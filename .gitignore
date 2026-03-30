@@ -40,8 +40,10 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # local
 .agents/skills/
 .cline/skills/
+.cognotate/
 .apiscope/
 share/
+data/
 tmp/
 
 # archives

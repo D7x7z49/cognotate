@@ -7,9 +7,7 @@ import {
   type FormattingOptions,
   type ModificationOptions,
   type JSONPath,
-  stripComments,
 } from "jsonc-parser";
-import { is } from "zod/locales";
 
 const FORMATTING: FormattingOptions = {
   insertSpaces: true,

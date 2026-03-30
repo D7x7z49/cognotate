@@ -14,7 +14,7 @@ if (!Bun.env.ENGINE_JWT_SECRET) {
 export const COGNOTATE = "cognotate";
 export const HOME_NAME = `.${COGNOTATE}`;
 
-export const ROOT = join(homedir(), HOME_NAME);
+export const ROOT = join(Bun.env.COGNOTATE_HOME ?? homedir(), HOME_NAME);
 export const ROOT_CONFIG = join(ROOT, "config.jsonc");
 
 // cache key constants
